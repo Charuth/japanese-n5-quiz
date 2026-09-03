@@ -1,5 +1,5 @@
 const CACHE = 'n5-quiz-v1';
-const FILES = ['/', '/index.html'];
+const FILES = ['/japanese-n5-quiz/index.html'];
 
 self.addEventListener('install', e => {
     e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));
