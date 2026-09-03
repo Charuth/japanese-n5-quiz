@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <meta property="og:title" content="N5 Japanese Quiz – Free, No Login" />
+    <meta property="og:description"
+        content="Simple touch-to-play multiple choice for N5 vocab. No ads, no stats, just practice." />
+    <meta name="theme-color" content="#1e293b" />
+    <title>Japanese N5 Quiz</title>
+    <style>
+        /* ── reset & base ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: #f2f4f8;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            margin: 0;
+            touch-action: manipulation;
+        }
+
+        .app {
+            max-width: 540px;
+            width: 100%;
+            background: #ffffff;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            padding: 24px 20px 32px;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ── typography ── */
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .subhead {
+            color: #64748b;
+            font-size: 15px;
+            font-weight: 400;
+            margin-bottom: 20px;
+        }
+
+        /* ── topic grid ── */
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .topic-btn {
+            background: #f8fafc;
+            border: 1.5px solid #e9edf2;
+            border-radius: 18px;
+            padding: 16px 8px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: center;
+            line-height: 1.3;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        .topic-btn:active {
+            transform: scale(0.96);
+            background: #eef2f6;
+        }
+
+        .topic-btn .sub {
+            display: block;
+            font-weight: 400;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        .topic-btn .badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #2563eb;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 0 10px;
+            border-radius: 20px;
+            line-height: 20px;
+            margin-top: 4px;
+        }
+
+        /* ── quiz card ── */
+        .quiz-area {
+            display: none;
+            animation: fadeUp 0.3s ease;
+        }
+
+        .quiz-area.active {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .quiz-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .quiz-header .back-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px 8px;
+            color: #64748b;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .quiz-header .back-btn:active {
+            transform: scale(0.9);
+        }
+
+        .quiz-header .topic-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #94a3b8;
+            background: #f1f5f9;
+            padding: 4px 16px;
+            border-radius: 40px;
+        }
+
+        .word-card {
+            background: #f8fafc;
+            border-radius: 28px;
+            padding: 36px 20px 28px;
+            text-align: center;
+            margin-bottom: 24px;
+            border: 1.5px solid #eef2f6;
+        }
+
+        .word-card .romaji {
+            font-size: 40px;
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+
+        .word-card .hint {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 8px;
+        }
+
+        .word-card .count {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 14px;
+        }
+
+        /* ── options ── */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            background: #ffffff;
+            border: 2px solid #e9edf2;
+            border-radius: 18px;
+            padding: 16px 20px;
+            font-size: 18px;
+            font-weight: 500;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.12s;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            text-align: left;
+            position: relative;
+        }
+
+        .option:active {
+            transform: scale(0.97);
+        }
+
+        .option .letter {
+            display: inline-block;
+            width: 28px;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+
+        .option.correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+            color: #15803d;
+        }
+
+        .option.correct .letter {
+            color: #22c55e;
+        }
+
+        .option.wrong {
+            border-color: #ef4444;
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .option.wrong .letter {
+            color: #ef4444;
+        }
+
+        .option.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .option.reveal-correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+            color: #15803d;
+        }
+
+        .option.reveal-correct .letter {
+            color: #22c55e;
+        }
+
+        /* ── next / continue ── */
+        .next-btn {
+            width: 100%;
+            background: #1e293b;
+            border: none;
+            border-radius: 18px;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.15s;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.96);
+        }
+
+        .next-btn.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+        }
+
+        .next-btn:active {
+            transform: scale(0.96);
+        }
+
+        .next-btn .emoji {
+            margin-right: 8px;
+        }
+
+        /* ── home / quiz toggle ── */
+        .home-area {
+            display: block;
+        }
+
+        .home-area.hidden {
+            display: none;
+        }
+
+        /* ── responsive ── */
+        @media (max-width: 480px) {
+            .app {
+                padding: 16px 14px 24px;
+                border-radius: 28px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .topic-grid {
+                gap: 8px;
+            }
+
+            .topic-btn {
+                padding: 14px 6px;
+                font-size: 14px;
+                border-radius: 14px;
+            }
+
+            .word-card .romaji {
+                font-size: 32px;
+            }
+
+            .option {
+                font-size: 16px;
+                padding: 14px 16px;
+                border-radius: 14px;
+            }
+
+            .quiz-header .topic-label {
+                font-size: 12px;
+                padding: 3px 12px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .topic-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+
+            .topic-btn {
+                font-size: 12px;
+                padding: 12px 4px;
+            }
+
+            .word-card .romaji {
+                font-size: 28px;
+            }
+
+            .option {
+                font-size: 14px;
+                padding: 12px 14px;
+            }
+        }
+
+        /* ── scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 0;
+        }
+
+        /* ── utility ── */
+        .mt-4 {
+            margin-top: 4px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .fade-transition {
+            transition: opacity 0.2s;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app" id="app">
+        <!-- ===== HOME ===== -->
+        <div class="home-area" id="homeArea">
+            <h1>日本語 N5</h1>
+            <div class="subhead">Pick a topic &amp; start practicing!</div>
+            <div class="topic-grid" id="topicGrid"></div>
+            <div style="margin-top:20px;font-size:13px;color:#94a3b8;text-align:center;">
+                Built by <b>Charuth Thameesha</b>.
+            </div>
+        </div>
+
+        <!-- ===== QUIZ ===== -->
+        <div class="quiz-area" id="quizArea">
+            <div class="quiz-header">
+                <button class="back-btn" id="backBtn">‹</button>
+                <span class="topic-label" id="quizTopicLabel">verbs</span>
+                <span style="width:36px;"></span>
+            </div>
+
+            <div class="word-card">
+                <div class="romaji" id="romajiDisplay">taberu</div>
+                <div class="hint">Choose the correct meaning.</div>
+                <div class="count" id="questionCount">1 / 10</div>
+            </div>
+
+            <div class="options" id="optionsContainer"></div>
+
+            <button class="next-btn" id="nextBtn">
+                <span class="emoji">→</span> next
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════════
+        //  D I C T I O N A R Y   —   N5  +  beyond
+        // ═══════════════════════════════════════════════════════════════
+
+        const DICT = {
+
+            verbs: [
+                { romaji: "taberu", english: "to eat" },
+                { romaji: "nomu", english: "to drink" },
+                { romaji: "miru", english: "to see / watch" },
+                { romaji: "kiku", english: "to hear / listen / ask" },
+                { romaji: "yomu", english: "to read" },
+                { romaji: "kaku", english: "to write" },
+                { romaji: "iku", english: "to go" },
+                { romaji: "kuru", english: "to come" },
+                { romaji: "kaeru", english: "to return" },
+                { romaji: "neru", english: "to sleep" },
+                { romaji: "okiru", english: "to wake up / get up" },
+                { romaji: "hanasu", english: "to speak / talk" },
+                { romaji: "tsukau", english: "to use" },
+                { romaji: "tsukuru", english: "to make / create" },
+                { romaji: "kau", english: "to buy" },
+                { romaji: "uru", english: "to sell" },
+                { romaji: "matsu", english: "to wait" },
+                { romaji: "aruku", english: "to walk" },
+                { romaji: "hashiru", english: "to run" },
+                { romaji: "oyogu", english: "to swim" },
+                { romaji: "benkyou suru", english: "to study" },
+                { romaji: "shigoto suru", english: "to work" },
+                { romaji: "asobu", english: "to play" },
+                { romaji: "utau", english: "to sing" },
+                { romaji: "odoru", english: "to dance" },
+                { romaji: "warau", english: "to laugh" },
+                { romaji: "naku", english: "to cry" },
+                { romaji: "kangaeru", english: "to think" },
+                { romaji: "oshieru", english: "to teach" },
+                { romaji: "manabu", english: "to learn" },
+                { romaji: "sumu", english: "to live / reside" },
+                { romaji: "tatsu", english: "to stand" },
+                { romaji: "suwaru", english: "to sit" },
+                { romaji: "fumu", english: "to step on" },
+                { romaji: "motomeru", english: "to seek / request" },
+                { romaji: "tojiru", english: "to close" },
+                { romaji: "akeru", english: "to open" },
+                { romaji: "wasureru", english: "to forget" },
+                { romaji: "oboeru", english: "to remember" },
+                { romaji: "hajimeru", english: "to begin" },
+                { romaji: "owaru", english: "to end / finish" },
+            ],
+
+            adjectives: [
+                { romaji: "ookii", english: "big" },
+                { romaji: "chiisai", english: "small" },
+                { romaji: "takai", english: "high / expensive" },
+                { romaji: "yasui", english: "cheap" },
+                { romaji: "atarashii", english: "new" },
+                { romaji: "furui", english: "old" },
+                { romaji: "atsui", english: "hot (weather)" },
+                { romaji: "samui", english: "cold (weather)" },
+                { romaji: "atatakai", english: "warm" },
+                { romaji: "suzushii", english: "cool / refreshing" },
+                { romaji: "oishii", english: "delicious" },
+                { romaji: "mazui", english: "bad-tasting" },
+                { romaji: "tanoshii", english: "fun / enjoyable" },
+                { romaji: "tsumaranai", english: "boring" },
+                { romaji: "muzukashii", english: "difficult" },
+                { romaji: "yasashii", english: "easy / kind" },
+                { romaji: "hayai", english: "fast / early" },
+                { romaji: "osoi", english: "slow / late" },
+                { romaji: "yoi", english: "good" },
+                { romaji: "warui", english: "bad" },
+                { romaji: "kawaii", english: "cute" },
+                { romaji: "kakkoii", english: "cool / stylish" },
+                { romaji: "shizuka", english: "quiet" },
+                { romaji: "nigiyaka", english: "lively / bustling" },
+                { romaji: "kirei", english: "beautiful / clean" },
+                { romaji: "yuumei", english: "famous" },
+                { romaji: "genki", english: "healthy / energetic" },
+                { romaji: "hima", english: "free (time)" },
+                { romaji: "isogashii", english: "busy" },
+                { romaji: "majime", english: "serious / earnest" },
+                { romaji: "akarui", english: "bright / cheerful" },
+                { romaji: "kurai", english: "dark / gloomy" },
+                { romaji: "omoshiroi", english: "interesting" },
+                { romaji: "tsuyoi", english: "strong" },
+                { romaji: "yowai", english: "weak" },
+            ],
+
+            nouns: [
+                { romaji: "hito", english: "person" },
+                { romaji: "mono", english: "thing" },
+                { romaji: "jikan", english: "time" },
+                { romaji: "hi", english: "day" },
+                { romaji: "tsuki", english: "month / moon" },
+                { romaji: "toshi", english: "year / age" },
+                { romaji: "tomodachi", english: "friend" },
+                { romaji: "kazoku", english: "family" },
+                { romaji: "chichi", english: "father" },
+                { romaji: "haha", english: "mother" },
+                { romaji: "ani", english: "older brother" },
+                { romaji: "ane", english: "older sister" },
+                { romaji: "otouto", english: "younger brother" },
+                { romaji: "imouto", english: "younger sister" },
+                { romaji: "sensei", english: "teacher" },
+                { romaji: "gakusei", english: "student" },
+                { romaji: "kaisha", english: "company" },
+                { romaji: "gakkou", english: "school" },
+                { romaji: "ie", english: "house / home" },
+                { romaji: "heya", english: "room" },
+                { romaji: "niwa", english: "garden" },
+                { romaji: "machi", english: "town" },
+                { romaji: "mura", english: "village" },
+                { romaji: "toshi", english: "city" },
+                { romaji: "kuni", english: "country" },
+                { romaji: "gengo", english: "language" },
+                { romaji: "nihongo", english: "Japanese language" },
+                { romaji: "eigo", english: "English language" },
+                { romaji: "hon", english: "book" },
+                { romaji: "shinbun", english: "newspaper" },
+                { romaji: "zasshi", english: "magazine" },
+                { romaji: "denwa", english: "telephone" },
+                { romaji: "kuruma", english: "car" },
+                { romaji: "densha", english: "train" },
+                { romaji: "basu", english: "bus" },
+                { romaji: "hikouki", english: "airplane" },
+                { romaji: "fune", english: "ship / boat" },
+                { romaji: "jitensha", english: "bicycle" },
+                { romaji: "tabemono", english: "food" },
+                { romaji: "nomimono", english: "drink / beverage" },
+                { romaji: "kudamono", english: "fruit" },
+                { romaji: "yasai", english: "vegetable" },
+                { romaji: "niku", english: "meat" },
+                { romaji: "sakana", english: "fish" },
+                { romaji: "tamago", english: "egg" },
+                { romaji: "gyuunyuu", english: "milk" },
+                { romaji: "mizu", english: "water" },
+                { romaji: "ocha", english: "tea" },
+                { romaji: "koohii", english: "coffee" },
+                { romaji: "biiru", english: "beer" },
+                { romaji: "wain", english: "wine" },
+                { romaji: "tenki", english: "weather" },
+                { romaji: "ame", english: "rain" },
+                { romaji: "yuki", english: "snow" },
+                { romaji: "kaze", english: "wind" },
+                { romaji: "kumo", english: "cloud" },
+                { romaji: "sora", english: "sky" },
+                { romaji: "umi", english: "sea / ocean" },
+                { romaji: "yama", english: "mountain" },
+                { romaji: "kawa", english: "river" },
+                { romaji: "hana", english: "flower" },
+                { romaji: "ki", english: "tree" },
+                { romaji: "inu", english: "dog" },
+                { romaji: "neko", english: "cat" },
+                { romaji: "tori", english: "bird" },
+                { romaji: "uma", english: "horse" },
+                { romaji: "ushi", english: "cow" },
+                { romaji: "buta", english: "pig" },
+                { romaji: "hitsuji", english: "sheep" },
+                { romaji: "saru", english: "monkey" },
+                { romaji: "kuma", english: "bear" },
+                { romaji: "ookami", english: "wolf" },
+                { romaji: "kitsune", english: "fox" },
+            ],
+
+            fruits: [
+                { romaji: "ringo", english: "apple" },
+                { romaji: "banana", english: "banana" },
+                { romaji: "orenji", english: "orange" },
+                { romaji: "ichigo", english: "strawberry" },
+                { romaji: "budou", english: "grape" },
+                { romaji: "suika", english: "watermelon" },
+                { romaji: "momo", english: "peach" },
+                { romaji: "nashi", english: "pear" },
+                { romaji: "kaki", english: "persimmon" },
+                { romaji: "remon", english: "lemon" },
+                { romaji: "kiwi", english: "kiwi" },
+                { romaji: "mango", english: "mango" },
+                { romaji: "painappuru", english: "pineapple" },
+                { romaji: "meron", english: "melon" },
+                { romaji: "zakuro", english: "pomegranate" },
+                { romaji: "ananasu", english: "pineapple" },
+                { romaji: "kokonatsu", english: "coconut" },
+                { romaji: "abokado", english: "avocado" },
+            ],
+
+            animals: [
+                { romaji: "inu", english: "dog" },
+                { romaji: "neko", english: "cat" },
+                { romaji: "tori", english: "bird" },
+                { romaji: "sakana", english: "fish" },
+                { romaji: "uma", english: "horse" },
+                { romaji: "ushi", english: "cow" },
+                { romaji: "buta", english: "pig" },
+                { romaji: "hitsuji", english: "sheep" },
+                { romaji: "saru", english: "monkey" },
+                { romaji: "kuma", english: "bear" },
+                { romaji: "ookami", english: "wolf" },
+                { romaji: "kitsune", english: "fox" },
+                { romaji: "usagi", english: "rabbit" },
+                { romaji: "nezumi", english: "mouse / rat" },
+                { romaji: "risu", english: "squirrel" },
+                { romaji: "tonakai", english: "reindeer" },
+                { romaji: "raion", english: "lion" },
+                { romaji: "tora", english: "tiger" },
+                { romaji: "zou", english: "elephant" },
+                { romaji: "kirin", english: "giraffe" },
+                { romaji: "panda", english: "panda" },
+                { romaji: "kangaruu", english: "kangaroo" },
+                { romaji: "wani", english: "crocodile" },
+                { romaji: "hebi", english: "snake" },
+                { romaji: "kame", english: "turtle" },
+            ],
+
+            food: [
+                { romaji: "gohan", english: "cooked rice / meal" },
+                { romaji: "pan", english: "bread" },
+                { romaji: "niku", english: "meat" },
+                { romaji: "sakana", english: "fish" },
+                { romaji: "tamago", english: "egg" },
+                { romaji: "gyuunyuu", english: "milk" },
+                { romaji: "mizu", english: "water" },
+                { romaji: "ocha", english: "tea" },
+                { romaji: "koohii", english: "coffee" },
+                { romaji: "biiru", english: "beer" },
+                { romaji: "wain", english: "wine" },
+                { romaji: "kudamono", english: "fruit" },
+                { romaji: "yasai", english: "vegetable" },
+                { romaji: "satou", english: "sugar" },
+                { romaji: "shio", english: "salt" },
+                { romaji: "kome", english: "rice (uncooked)" },
+                { romaji: "men", english: "noodles" },
+                { romaji: "soup", english: "soup" },
+                { romaji: "salada", english: "salad" },
+                { romaji: "aisu", english: "ice cream" },
+                { romaji: "keki", english: "cake" },
+                { romaji: "chokoreeto", english: "chocolate" },
+                { romaji: "hambāgā", english: "hamburger" },
+                { romaji: "piza", english: "pizza" },
+                { romaji: "sushi", english: "sushi" },
+                { romaji: "ramen", english: "ramen" },
+            ],
+
+            body: [
+                { romaji: "atama", english: "head" },
+                { romaji: "kami", english: "hair" },
+                { romaji: "me", english: "eye" },
+                { romaji: "mimi", english: "ear" },
+                { romaji: "hana", english: "nose" },
+                { romaji: "kuchi", english: "mouth" },
+                { romaji: "te", english: "hand" },
+                { romaji: "ashi", english: "foot / leg" },
+                { romaji: "mune", english: "chest" },
+                { romaji: "senaka", english: "back" },
+                { romaji: "onaka", english: "stomach" },
+                { romaji: "koshi", english: "hip / waist" },
+                { romaji: "hiza", english: "knee" },
+                { romaji: "kata", english: "shoulder" },
+                { romaji: "kubi", english: "neck" },
+                { romaji: "yubi", english: "finger / toe" },
+                { romaji: "tsume", english: "nail" },
+                { romaji: "hoho", english: "cheek" },
+                { romaji: "ago", english: "chin" },
+                { romaji: "hitai", english: "forehead" },
+            ],
+
+            family: [
+                { romaji: "kazoku", english: "family" },
+                { romaji: "chichi", english: "father" },
+                { romaji: "haha", english: "mother" },
+                { romaji: "ani", english: "older brother" },
+                { romaji: "ane", english: "older sister" },
+                { romaji: "otouto", english: "younger brother" },
+                { romaji: "imouto", english: "younger sister" },
+                { romaji: "sofu", english: "grandfather" },
+                { romaji: "sobo", english: "grandmother" },
+                { romaji: "musuko", english: "son" },
+                { romaji: "musume", english: "daughter" },
+                { romaji: "shujin", english: "husband" },
+                { romaji: "tsuma", english: "wife" },
+                { romaji: "oji", english: "uncle" },
+                { romaji: "oba", english: "aunt" },
+                { romaji: "itoko", english: "cousin" },
+            ],
+
+            colors: [
+                { romaji: "aka", english: "red" },
+                { romaji: "ao", english: "blue" },
+                { romaji: "kiiro", english: "yellow" },
+                { romaji: "midori", english: "green" },
+                { romaji: "shiro", english: "white" },
+                { romaji: "kuro", english: "black" },
+                { romaji: "murasaki", english: "purple" },
+                { romaji: "pinku", english: "pink" },
+                { romaji: "orenji", english: "orange (color)" },
+                { romaji: "chairo", english: "brown" },
+                { romaji: "haiiro", english: "gray" },
+                { romaji: "kin'iro", english: "gold" },
+                { romaji: "gin'iro", english: "silver" },
+                { romaji: "mizuiro", english: "light blue" },
+            ],
+
+            numbers: [
+                { romaji: "ichi", english: "one" },
+                { romaji: "ni", english: "two" },
+                { romaji: "san", english: "three" },
+                { romaji: "yon / shi", english: "four" },
+                { romaji: "go", english: "five" },
+                { romaji: "roku", english: "six" },
+                { romaji: "nana / shichi", english: "seven" },
+                { romaji: "hachi", english: "eight" },
+                { romaji: "kyuu / ku", english: "nine" },
+                { romaji: "juu", english: "ten" },
+                { romaji: "hyaku", english: "hundred" },
+                { romaji: "sen", english: "thousand" },
+                { romaji: "man", english: "ten thousand" },
+            ],
+
+            time: [
+                { romaji: "jikan", english: "time" },
+                { romaji: "toki", english: "time / moment" },
+                { romaji: "asa", english: "morning" },
+                { romaji: "hiru", english: "noon / daytime" },
+                { romaji: "yoru", english: "night" },
+                { romaji: "ban", english: "evening" },
+                { romaji: "kinou", english: "yesterday" },
+                { romaji: "kyou", english: "today" },
+                { romaji: "ashita", english: "tomorrow" },
+                { romaji: "kesa", english: "this morning" },
+                { romaji: "konban", english: "this evening" },
+                { romaji: "shuumatsu", english: "weekend" },
+                { romaji: "getsuyoubi", english: "Monday" },
+                { romaji: "kayoubi", english: "Tuesday" },
+                { romaji: "suiyoubi", english: "Wednesday" },
+                { romaji: "mokuyoubi", english: "Thursday" },
+                { romaji: "kinyoubi", english: "Friday" },
+                { romaji: "doyoubi", english: "Saturday" },
+                { romaji: "nichiyoubi", english: "Sunday" },
+                { romaji: "nen", english: "year" },
+                { romaji: "tsuki", english: "month" },
+                { romaji: "shuu", english: "week" },
+            ],
+
+            weather: [
+                { romaji: "tenki", english: "weather" },
+                { romaji: "hare", english: "clear / sunny" },
+                { romaji: "ame", english: "rain" },
+                { romaji: "yuki", english: "snow" },
+                { romaji: "kaze", english: "wind" },
+                { romaji: "kumo", english: "cloud" },
+                { romaji: "arashi", english: "storm" },
+                { romaji: "taifuu", english: "typhoon" },
+                { romaji: "kaminari", english: "thunder" },
+                { romaji: "niji", english: "rainbow" },
+                { romaji: "kiru", english: "fog / mist" },
+                { romaji: "samusa", english: "coldness" },
+                { romaji: "atsusa", english: "heat" },
+                { romaji: "mushiatsui", english: "humid / muggy" },
+            ],
+
+            places: [
+                { romaji: "gakkou", english: "school" },
+                { romaji: "kaisha", english: "company" },
+                { romaji: "byouin", english: "hospital" },
+                { romaji: "yakkyoku", english: "pharmacy" },
+                { romaji: "toshokan", english: "library" },
+                { romaji: "yuubinkyoku", english: "post office" },
+                { romaji: "keisatsusho", english: "police station" },
+                { romaji: "eki", english: "station" },
+                { romaji: "kuukou", english: "airport" },
+                { romaji: "kounan", english: "harbor / port" },
+                { romaji: "depaato", english: "department store" },
+                { romaji: "kissa", english: "café" },
+                { romaji: "resutoran", english: "restaurant" },
+                { romaji: "hoteru", english: "hotel" },
+                { romaji: "jiin", english: "temple" },
+                { romaji: "jinja", english: "shrine" },
+                { romaji: "kouen", english: "park" },
+                { romaji: "suupaa", english: "supermarket" },
+                { romaji: "konbini", english: "convenience store" },
+            ],
+
+            clothing: [
+                { romaji: "fuku", english: "clothes" },
+                { romaji: "kutsu", english: "shoes" },
+                { romaji: "kutsushita", english: "socks" },
+                { romaji: "zubon", english: "pants" },
+                { romaji: "shatsu", english: "shirt" },
+                { romaji: "waishatsu", english: "dress shirt" },
+                { romaji: "sukāto", english: "skirt" },
+                { romaji: "doresu", english: "dress" },
+                { romaji: "jāketto", english: "jacket" },
+                { romaji: "kōto", english: "coat" },
+                { romaji: "sebiro", english: "suit" },
+                { romaji: "nekutai", english: "tie" },
+                { romaji: "bōshi", english: "hat" },
+                { romaji: "megane", english: "glasses" },
+                { romaji: "tebukuro", english: "gloves" },
+                { romaji: "mufurā", english: "scarf" },
+                { romaji: "obī", english: "belt" },
+                { romaji: "jitensha", english: "bicycle" },
+                { romaji: "kaban", english: "bag" },
+                { romaji: "saifu", english: "wallet" },
+            ],
+
+            transport: [
+                { romaji: "kuruma", english: "car" },
+                { romaji: "densha", english: "train" },
+                { romaji: "basu", english: "bus" },
+                { romaji: "hikouki", english: "airplane" },
+                { romaji: "fune", english: "ship / boat" },
+                { romaji: "jitensha", english: "bicycle" },
+                { romaji: "baiku", english: "motorbike" },
+                { romaji: "takushii", english: "taxi" },
+                { romaji: "chikatetsu", english: "subway" },
+                { romaji: "shinkansen", english: "bullet train" },
+                { romaji: "ferī", english: "ferry" },
+                { romaji: "torakku", english: "truck" },
+                { romaji: "resukyū", english: "rescue vehicle" },
+            ],
+
+        };
+
+        // ── topic display names & icons ──
+        const TOPIC_META = {
+            verbs: { label: 'Verbs', icon: '🏃', badge: '30+' },
+            adjectives: { label: 'Adjectives', icon: '🎨', badge: '30+' },
+            nouns: { label: 'Nouns', icon: '📦', badge: '60+' },
+            fruits: { label: 'Fruits', icon: '🍎', badge: '18' },
+            animals: { label: 'Animals', icon: '🐾', badge: '25' },
+            food: { label: 'Food', icon: '🍣', badge: '26' },
+            body: { label: 'Body Parts', icon: '🧍', badge: '20' },
+            family: { label: 'Family', icon: '👪', badge: '15' },
+            colors: { label: 'Colors', icon: '🎨', badge: '14' },
+            numbers: { label: 'Numbers', icon: '🔢', badge: '13' },
+            time: { label: 'Time', icon: '⏰', badge: '22' },
+            weather: { label: 'Weather', icon: '🌤️', badge: '14' },
+            places: { label: 'Places', icon: '📍', badge: '18' },
+            clothing: { label: 'Clothing', icon: '👕', badge: '19' },
+            transport: { label: 'Transport', icon: '🚗', badge: '12' },
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        //  A P P   S T A T E
+        // ═══════════════════════════════════════════════════════════════
+
+        let state = {
+            topic: null, // e.g. 'verbs'
+            words: [], // array of {romaji, english}
+            currentWord: null, // {romaji, english}
+            options: [], // [ {english, isCorrect}, ... ]
+            answered: false,
+            questionIndex: 0,
+            totalQuestions: 0,
+        };
+
+        // DOM refs
+        const $ = id => document.getElementById(id);
+        const homeArea = $('homeArea');
+        const quizArea = $('quizArea');
+        const topicGrid = $('topicGrid');
+        const quizTopicLabel = $('quizTopicLabel');
+        const romajiDisplay = $('romajiDisplay');
+        const optionsContainer = $('optionsContainer');
+        const nextBtn = $('nextBtn');
+        const backBtn = $('backBtn');
+        const questionCount = $('questionCount');
+
+        // ── helpers ──
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function pick(arr, n) {
+            const copy = [...arr];
+            shuffle(copy);
+            return copy.slice(0, n);
+        }
+
+        // ── render topic grid ──
+        function renderTopics() {
+            topicGrid.innerHTML = '';
+            const keys = Object.keys(DICT);
+            for (const key of keys) {
+                const meta = TOPIC_META[key] || { label: key, icon: '📚', badge: '' };
+                const count = DICT[key].length;
+                const btn = document.createElement('button');
+                btn.className = 'topic-btn';
+                btn.innerHTML = `
+                    ${meta.icon} ${meta.label}
+                    <span class="sub">${count} words</span>
+                    ${meta.badge ? `<span class="badge">${meta.badge}</span>` : ''}
+                `;
+                btn.dataset.topic = key;
+                btn.addEventListener('click', () => startQuiz(key));
+                topicGrid.appendChild(btn);
+            }
+        }
+
+        // ── start quiz ──
+        function startQuiz(topicKey) {
+            const words = DICT[topicKey];
+            if (!words || words.length < 4) {
+                alert('Not enough words in this topic (need at least 4).');
+                return;
+            }
+
+            state.topic = topicKey;
+            state.words = shuffle([...words]);
+            state.questionIndex = 0;
+            state.totalQuestions = state.words.length;
+            state.answered = false;
+
+            const meta = TOPIC_META[topicKey] || { label: topicKey };
+            quizTopicLabel.textContent = meta.label;
+
+            homeArea.classList.add('hidden');
+            quizArea.classList.add('active');
+            nextBtn.classList.remove('show');
+
+            showQuestion();
+        }
+
+        // ── show question ──
+        function showQuestion() {
+            const words = state.words;
+            if (state.questionIndex >= words.length) {
+                // reshuffle when we run out
+                state.words = shuffle([...DICT[state.topic]]);
+                state.questionIndex = 0;
+                state.totalQuestions = state.words.length;
+            }
+
+            const word = words[state.questionIndex];
+            state.currentWord = word;
+            state.answered = false;
+
+            // build 4 options: 1 correct + 3 wrong from same topic
+            const pool = DICT[state.topic].filter(w => w.english !== word.english);
+            const wrongs = pick(pool, 3);
+            const optList = [
+                { english: word.english, isCorrect: true },
+                ...wrongs.map(w => ({ english: w.english, isCorrect: false })),
+            ];
+            shuffle(optList);
+            state.options = optList;
+
+            // render
+            romajiDisplay.textContent = word.romaji;
+            questionCount.textContent = `${state.questionIndex + 1} / ${state.totalQuestions}`;
+
+            optionsContainer.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
+            optList.forEach((opt, idx) => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                div.innerHTML = `<span class="letter">${letters[idx]}.</span> ${opt.english}`;
+                div.dataset.index = idx;
+                div.addEventListener('click', () => handleOptionClick(idx));
+                optionsContainer.appendChild(div);
+            });
+
+            nextBtn.classList.remove('show');
+            nextBtn.innerHTML = `<span class="emoji">→</span> next`;
+        }
+
+        // ── handle option click ──
+        function handleOptionClick(index) {
+            if (state.answered) return;
+            state.answered = true;
+
+            const opt = state.options[index];
+            const isCorrect = opt.isCorrect;
+
+            const optionEls = optionsContainer.querySelectorAll('.option');
+            // disable all
+            optionEls.forEach(el => el.classList.add('disabled'));
+
+            // find correct index
+            const correctIdx = state.options.findIndex(o => o.isCorrect);
+
+            if (isCorrect) {
+                optionEls[index].classList.add('correct');
+            } else {
+                optionEls[index].classList.add('wrong');
+                optionEls[correctIdx].classList.add('reveal-correct');
+            }
+
+            // show next button
+            nextBtn.classList.add('show');
+            nextBtn.innerHTML = `<span class="emoji">→</span> next`;
+        }
+
+        // ── next question ──
+        function nextQuestion() {
+            state.questionIndex++;
+            showQuestion();
+            // scroll to top of quiz area smoothly
+            quizArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ── go back home ──
+        function goHome() {
+            quizArea.classList.remove('active');
+            homeArea.classList.remove('hidden');
+            nextBtn.classList.remove('show');
+            state.answered = false;
+        }
+
+        // ── event listeners ──
+        nextBtn.addEventListener('click', nextQuestion);
+        backBtn.addEventListener('click', goHome);
+
+        // ── init ──
+        renderTopics();
+
+        // ── keyboard support ──
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && nextBtn.classList.contains('show')) {
+                nextBtn.click();
+            }
+            if (e.key === 'Escape' && quizArea.classList.contains('active')) {
+                goHome();
+            }
+            // number keys 1-4 for options
+            if (!state.answered && quizArea.classList.contains('active')) {
+                const num = parseInt(e.key);
+                if (num >= 1 && num <= 4) {
+                    const idx = num - 1;
+                    const els = optionsContainer.querySelectorAll('.option');
+                    if (els[idx] && !els[idx].classList.contains('disabled')) {
+                        els[idx].click();
+                    }
+                }
+            }
+        });
+
+        console.log('🇯🇵 N5 Quiz loaded — enjoy!');
+        console.log(`📚 ${Object.keys(DICT).length} topics, ${Object.values(DICT).reduce((acc, arr) => acc + arr.length, 0)} words total.`);
+    </script>
+</body>
+
+</html>
