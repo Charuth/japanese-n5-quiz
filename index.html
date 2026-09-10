@@ -2,1082 +2,2706 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <meta property="og:title" content="N5 Japanese Quiz – Free, No Login" />
-    <meta property="og:description"
-        content="Simple touch-to-play multiple choice for N5 vocab. No ads, no stats, just practice." />
-    <meta name="theme-color" content="#1e293b" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <meta property="og:title" content="N5 Japanese Quiz – Free, No Login" />
+  <meta property="og:description"
+    content="Simple touch-to-play multiple choice for N5 vocab. No ads, no stats, just practice." />
+  <meta name="theme-color" content="#1e293b" />
 
-    <link rel="manifest" href="/japanese-n5-quiz/manifest.json">
-    <meta name="theme-color" content="#1e293b">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="N5 Quiz">
-    <link rel="apple-touch-icon"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%231e293b'/%3E%3Ctext x='96' y='120' font-family='system-ui' font-size='80' text-anchor='middle' fill='white'%3E日本語%3C/text%3E%3C/svg%3E">
+  <link rel="manifest" href="/japanese-n5-quiz/manifest.json">
+  <meta name="theme-color" content="#1e293b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="N5 Quiz">
+  <link rel="apple-touch-icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%231e293b'/%3E%3Ctext x='96' y='120' font-family='system-ui' font-size='80' text-anchor='middle' fill='white'%3E日本語%3C/text%3E%3C/svg%3E">
 
-    <title>Japanese N5 Quiz</title>
-    <style>
-        /* ── reset & base ── */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <title>Japanese N5 Quiz</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            background: #f2f4f8;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-            margin: 0;
-            touch-action: manipulation;
-        }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: #f2f4f8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      touch-action: manipulation;
+    }
 
-        .app {
-            max-width: 540px;
-            width: 100%;
-            background: #ffffff;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
-            padding: 24px 20px 32px;
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
+    .app {
+      max-width: 540px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+      padding: 24px 20px 32px;
+      position: relative;
+      overflow: hidden;
+    }
 
-        /* ── typography ── */
-        h1 {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-            color: #1e293b;
-            margin-bottom: 4px;
-        }
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 4px;
+      letter-spacing: -0.3px;
+    }
 
-        .subhead {
-            color: #64748b;
-            font-size: 15px;
-            font-weight: 400;
-            margin-bottom: 20px;
-        }
+    .subhead {
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
 
-        /* ── topic grid ── */
-        .topic-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 4px;
-        }
+    /* ── global progress ── */
+    .global-progress {
+      background: #f8fafc;
+      border: 1.5px solid #eef2f6;
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
 
-        .topic-btn {
-            background: #f8fafc;
-            border: 1.5px solid #e9edf2;
-            border-radius: 18px;
-            padding: 16px 8px;
-            font-size: 15px;
-            font-weight: 600;
-            color: #1e293b;
-            cursor: pointer;
-            transition: all 0.15s;
-            text-align: center;
-            line-height: 1.3;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-        }
+    .gp-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+      gap: 8px;
+    }
 
-        .topic-btn:active {
-            transform: scale(0.96);
-            background: #eef2f6;
-        }
+    .gp-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
 
-        .topic-btn .sub {
-            display: block;
-            font-weight: 400;
-            font-size: 12px;
-            color: #94a3b8;
-            margin-top: 2px;
-        }
+    .gp-count {
+      font-size: 12px;
+      color: #64748b;
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+    }
 
-        .topic-btn .badge {
-            display: inline-block;
-            background: #dbeafe;
-            color: #2563eb;
-            font-size: 10px;
-            font-weight: 600;
-            padding: 0 10px;
-            border-radius: 20px;
-            line-height: 20px;
-            margin-top: 4px;
-        }
+    .gp-bar {
+      height: 8px;
+      background: #eef2f6;
+      border-radius: 4px;
+      overflow: hidden;
+    }
 
-        /* ── quiz card ── */
-        .quiz-area {
-            display: none;
-            animation: fadeUp 0.3s ease;
-        }
+    .gp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #22c55e);
+      width: 0%;
+      transition: width 0.4s ease;
+      border-radius: 4px;
+    }
 
-        .quiz-area.active {
-            display: block;
-        }
+    /* ── topic grid ── */
+    .topic-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
 
-        @keyframes fadeUp {
-            0% {
-                opacity: 0;
-                transform: translateY(14px);
-            }
+    .topic-btn {
+      position: relative;
+      background: #f8fafc;
+      border: 1.5px solid #e9edf2;
+      border-radius: 16px;
+      padding: 11px 12px 10px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+    }
 
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    .topic-btn:active {
+      transform: scale(0.97);
+      background: #eef2f6;
+    }
 
-        .quiz-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
+    .topic-btn.done {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      cursor: default;
+    }
 
-        .quiz-header .back-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 4px 8px;
-            color: #64748b;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-        }
+    .topic-btn.done:active {
+      transform: none;
+      background: #f0fdf4;
+    }
 
-        .quiz-header .back-btn:active {
-            transform: scale(0.9);
-        }
+    .tb-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      min-height: 20px;
+    }
 
-        .quiz-header .topic-label {
-            font-size: 14px;
-            font-weight: 500;
-            color: #94a3b8;
-            background: #f1f5f9;
-            padding: 4px 16px;
-            border-radius: 40px;
-        }
+    .tb-icon {
+      font-size: 15px;
+      line-height: 1;
+    }
 
-        .word-card {
-            background: #f8fafc;
-            border-radius: 28px;
-            padding: 36px 20px 28px;
-            text-align: center;
-            margin-bottom: 24px;
-            border: 1.5px solid #eef2f6;
-        }
+    .tb-reset {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      color: #cbd5e1;
+      padding: 2px 4px;
+      border-radius: 6px;
+      line-height: 1;
+      -webkit-tap-highlight-color: transparent;
+      transition: all 0.15s;
+    }
 
-        .word-card .romaji {
-            font-size: 40px;
-            font-weight: 700;
-            color: #0f172a;
-            letter-spacing: 0.5px;
-            line-height: 1.2;
-        }
+    .tb-reset:hover {
+      color: #ef4444;
+      background: #fef2f2;
+    }
 
-        .word-card .hint {
-            font-size: 13px;
-            color: #94a3b8;
-            margin-top: 8px;
-        }
+    .tb-reset:active {
+      transform: scale(0.85);
+    }
 
-        .word-card .count {
-            font-size: 13px;
-            color: #94a3b8;
-            margin-top: 14px;
-        }
+    .tb-label {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.25;
+      margin-top: 2px;
+    }
 
-        /* ── options ── */
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+    .topic-btn.done .tb-label {
+      color: #15803d;
+    }
 
-        .option {
-            background: #ffffff;
-            border: 2px solid #e9edf2;
-            border-radius: 18px;
-            padding: 16px 20px;
-            font-size: 18px;
-            font-weight: 500;
-            color: #1e293b;
-            cursor: pointer;
-            transition: all 0.12s;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            text-align: left;
-            position: relative;
-        }
+    .tb-count {
+      font-size: 11px;
+      color: #94a3b8;
+      font-variant-numeric: tabular-nums;
+      margin-top: 1px;
+    }
 
-        .option:active {
-            transform: scale(0.97);
-        }
+    .topic-btn.done .tb-count {
+      color: #22c55e;
+      font-weight: 600;
+    }
 
-        .option .letter {
-            display: inline-block;
-            width: 28px;
-            font-weight: 600;
-            color: #94a3b8;
-        }
+    .tb-bar {
+      height: 4px;
+      background: #eef2f6;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
 
-        .option.correct {
-            border-color: #22c55e;
-            background: #f0fdf4;
-            color: #15803d;
-        }
+    .tb-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #22c55e);
+      width: 0%;
+      transition: width 0.35s ease;
+      border-radius: 2px;
+    }
 
-        .option.correct .letter {
-            color: #22c55e;
-        }
+    .topic-btn.done .tb-fill {
+      background: #22c55e;
+    }
 
-        .option.wrong {
-            border-color: #ef4444;
-            background: #fef2f2;
-            color: #dc2626;
-        }
+    /* ── quiz ── */
+    .quiz-area {
+      display: none;
+      animation: fadeUp 0.3s ease;
+    }
 
-        .option.wrong .letter {
-            color: #ef4444;
-        }
+    .quiz-area.active {
+      display: block;
+    }
 
-        .option.disabled {
-            pointer-events: none;
-            opacity: 0.7;
-        }
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
 
-        .option.reveal-correct {
-            border-color: #22c55e;
-            background: #f0fdf4;
-            color: #15803d;
-        }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-        .option.reveal-correct .letter {
-            color: #22c55e;
-        }
+    .home-area.hidden {
+      display: none;
+    }
 
-        /* ── next / continue ── */
-        .next-btn {
-            width: 100%;
-            background: #1e293b;
-            border: none;
-            border-radius: 18px;
-            padding: 18px;
-            font-size: 18px;
-            font-weight: 600;
-            color: #ffffff;
-            cursor: pointer;
-            transition: all 0.15s;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-            opacity: 0;
-            pointer-events: none;
-            transform: scale(0.96);
-        }
+    .quiz-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
 
-        .next-btn.show {
-            opacity: 1;
-            pointer-events: auto;
-            transform: scale(1);
-        }
+    .back-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px 8px;
+      color: #64748b;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-        .next-btn:active {
-            transform: scale(0.96);
-        }
+    .back-btn:active {
+      transform: scale(0.9);
+    }
 
-        .next-btn .emoji {
-            margin-right: 8px;
-        }
+    .topic-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #475569;
+      background: #f1f5f9;
+      padding: 4px 14px;
+      border-radius: 40px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 50%;
+    }
 
-        /* ── home / quiz toggle ── */
-        .home-area {
-            display: block;
-        }
+    .romaji-toggle {
+      background: #f1f5f9;
+      border: none;
+      font-size: 11px;
+      font-weight: 600;
+      color: #475569;
+      padding: 6px 10px;
+      border-radius: 20px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      white-space: nowrap;
+    }
 
-        .home-area.hidden {
-            display: none;
-        }
+    .romaji-toggle.on {
+      background: #dbeafe;
+      color: #2563eb;
+    }
 
-        /* ── responsive ── */
-        @media (max-width: 480px) {
-            .app {
-                padding: 16px 14px 24px;
-                border-radius: 28px;
-            }
+    /* ── progress ── */
+    .progress-track {
+      height: 6px;
+      background: #eef2f6;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
 
-            h1 {
-                font-size: 24px;
-            }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #22c55e);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
 
-            .topic-grid {
-                gap: 8px;
-            }
+    /* ── score bar ── */
+    .score-bar {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #64748b;
+      margin-bottom: 14px;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
 
-            .topic-btn {
-                padding: 14px 6px;
-                font-size: 14px;
-                border-radius: 14px;
-            }
+    .score-bar .score-correct {
+      color: #16a34a;
+    }
 
-            .word-card .romaji {
-                font-size: 32px;
-            }
+    .score-bar .score-wrong {
+      color: #dc2626;
+    }
 
-            .option {
-                font-size: 16px;
-                padding: 14px 16px;
-                border-radius: 14px;
-            }
+    /* ── word card ── */
+    .word-card {
+      position: relative;
+      background: #f8fafc;
+      border-radius: 24px;
+      padding: 28px 20px 20px;
+      text-align: center;
+      margin-bottom: 16px;
+      border: 1.5px solid #eef2f6;
+      transition: background 0.25s, border-color 0.25s;
+    }
 
-            .quiz-header .topic-label {
-                font-size: 12px;
-                padding: 3px 12px;
-            }
-        }
+    .word-card.mastered {
+      background: #f0fdf4;
+      border-color: #86efac;
+    }
 
-        @media (max-width: 380px) {
-            .topic-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 6px;
-            }
+    .word-kanji {
+      font-size: 52px;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.15;
+      letter-spacing: 1px;
+      word-break: break-word;
+    }
 
-            .topic-btn {
-                font-size: 12px;
-                padding: 12px 4px;
-            }
+    .word-kana {
+      font-size: 17px;
+      color: #64748b;
+      font-weight: 500;
+      margin-top: 6px;
+      min-height: 0;
+    }
 
-            .word-card .romaji {
-                font-size: 28px;
-            }
+    .word-kana:empty {
+      display: none;
+    }
 
-            .option {
-                font-size: 14px;
-                padding: 12px 14px;
-            }
-        }
+    .word-romaji {
+      font-size: 15px;
+      color: #94a3b8;
+      font-weight: 500;
+      margin-top: 3px;
+      min-height: 20px;
+      transition: opacity 0.2s;
+    }
 
-        /* ── scrollbar ── */
-        ::-webkit-scrollbar {
-            width: 0;
-        }
+    .word-romaji.hidden {
+      opacity: 0;
+    }
 
-        /* ── utility ── */
-        .mt-4 {
-            margin-top: 4px;
-        }
+    /* ── streak pips ── */
+    .streak-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      margin-top: 16px;
+    }
 
-        .text-center {
-            text-align: center;
-        }
+    .pips {
+      display: flex;
+      gap: 6px;
+    }
 
-        .fade-transition {
-            transition: opacity 0.2s;
-        }
+    .pip {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      transition: all 0.2s ease;
+    }
 
-        a {
-            color: #3b82f6;
-            text-decoration: none;
-        }
-    </style>
+    .pip.on {
+      background: #3b82f6;
+      transform: scale(1.12);
+    }
+
+    .pip.master {
+      background: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+    }
+
+    .streak-label {
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .mastered-badge {
+      display: none;
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #22c55e;
+      color: #ffffff;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      padding: 4px 9px;
+      border-radius: 20px;
+      animation: pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .mastered-badge.show {
+      display: block;
+    }
+
+    @keyframes pop {
+      from {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* ── options ── */
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      margin-bottom: 16px;
+    }
+
+    .option {
+      background: #ffffff;
+      border: 2px solid #e9edf2;
+      border-radius: 16px;
+      padding: 15px 18px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #1e293b;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.12s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      position: relative;
+    }
+
+    .option:active {
+      transform: scale(0.97);
+    }
+
+    .option .letter {
+      display: inline-block;
+      width: 24px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    .option.correct {
+      border-color: #22c55e;
+      background: #f0fdf4;
+      color: #15803d;
+    }
+
+    .option.correct .letter {
+      color: #22c55e;
+    }
+
+    .option.wrong {
+      border-color: #ef4444;
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    .option.wrong .letter {
+      color: #ef4444;
+    }
+
+    .option.disabled {
+      pointer-events: none;
+      opacity: 0.65;
+    }
+
+    .option.reveal-correct {
+      border-color: #22c55e;
+      background: #f0fdf4;
+      color: #15803d;
+      opacity: 1;
+    }
+
+    .option.reveal-correct .letter {
+      color: #22c55e;
+    }
+
+    /* ── next / continue ── */
+    .next-btn {
+      width: 100%;
+      background: #1e293b;
+      border: none;
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: 600;
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.96);
+    }
+
+    .next-btn.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+
+    .next-btn:active {
+      transform: scale(0.96);
+    }
+
+    .next-btn.finish {
+      background: #16a34a;
+    }
+
+    /* ── results ── */
+    .results {
+      display: none;
+      animation: fadeUp 0.3s ease;
+    }
+
+    .results.active {
+      display: block;
+    }
+
+    .results h2 {
+      font-size: 24px;
+      color: #1e293b;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .results .big-score {
+      font-size: 48px;
+      font-weight: 700;
+      color: #16a34a;
+      margin: 16px 0 4px;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .results .big-score .denom {
+      font-size: 24px;
+      color: #94a3b8;
+    }
+
+    .results .score-msg {
+      text-align: center;
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 22px;
+    }
+
+    .session-summary {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .summary-cell {
+      flex: 1;
+      background: #f8fafc;
+      border: 1.5px solid #eef2f6;
+      border-radius: 14px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+
+    .summary-cell .num {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.2;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .summary-cell .num.green {
+      color: #16a34a;
+    }
+
+    .summary-cell .num.red {
+      color: #dc2626;
+    }
+
+    .summary-cell .cap {
+      font-size: 10.5px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-top: 3px;
+    }
+
+    .missed-list {
+      margin-bottom: 20px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    .missed-list .ml-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 8px;
+    }
+
+    .missed-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 14px;
+      background: #fef2f2;
+      border-radius: 12px;
+      margin-bottom: 7px;
+      gap: 12px;
+    }
+
+    .missed-item .m-word {
+      font-weight: 600;
+      color: #1e293b;
+      font-size: 16px;
+    }
+
+    .missed-item .m-romaji {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .missed-item .m-english {
+      font-size: 14px;
+      color: #dc2626;
+      font-weight: 500;
+      text-align: right;
+    }
+
+    .results-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .results-actions button {
+      flex: 1;
+      min-width: 110px;
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.12s;
+    }
+
+    .btn-primary {
+      background: #1e293b;
+      color: #ffffff;
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .btn-danger {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    .btn-primary:active,
+    .btn-secondary:active,
+    .btn-danger:active {
+      transform: scale(0.97);
+    }
+
+    /* ── footer ── */
+    .footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #94a3b8;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .link-btn {
+      background: none;
+      border: none;
+      color: #cbd5e1;
+      font-size: 11.5px;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 4px;
+      -webkit-tap-highlight-color: transparent;
+      font-family: inherit;
+    }
+
+    .link-btn:hover {
+      color: #ef4444;
+    }
+
+    /* ── responsive ── */
+    @media (max-width: 480px) {
+      .app {
+        padding: 16px 14px 24px;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+
+      .word-kanji {
+        font-size: 42px;
+      }
+
+      .option {
+        font-size: 15px;
+        padding: 13px 15px;
+        border-radius: 13px;
+      }
+
+      .tb-label {
+        font-size: 12.5px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .word-kanji {
+        font-size: 34px;
+      }
+
+      .option {
+        font-size: 14px;
+        padding: 11px 13px;
+      }
+
+      .topic-grid {
+        gap: 8px;
+      }
+    }
+
+    a {
+      color: #3b82f6;
+      text-decoration: none;
+    }
+  </style>
 </head>
 
 <script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/japanese-n5-quiz/sw.js');
-    }
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/japanese-n5-quiz/sw.js');
+  }
 </script>
 
 <body>
 
-    <div class="app" id="app">
-        <!-- ===== HOME ===== -->
-        <div class="home-area" id="homeArea">
-            <h1>日本語 N5 - <a href="/japanese-n5-quiz/index2.html">Advanced</a></h1>
-            <div class="subhead">Pick a topic &amp; start practicing!</div>
-            <div class="topic-grid" id="topicGrid"></div>
-            <div style="margin-top:20px;font-size:13px;color:#94a3b8;text-align:center;">
-                Built by <b>Charuth Thameesha</b>.
-            </div>
+  <div class="app">
+    <!-- ===== HOME ===== -->
+    <div class="home-area" id="homeArea">
+      <h1>日本語 N5</h1>
+      <div class="subhead">Accurate N5 vocabulary · Master every word, 3 correct in a row</div>
+
+      <div class="global-progress">
+        <div class="gp-top">
+          <span class="gp-label">Overall mastery</span>
+          <span class="gp-count" id="globalCount">0 / 0 · 0%</span>
         </div>
-
-        <!-- ===== QUIZ ===== -->
-        <div class="quiz-area" id="quizArea">
-            <div class="quiz-header">
-                <button class="back-btn" id="backBtn">‹</button>
-                <span class="topic-label" id="quizTopicLabel">verbs</span>
-                <span style="width:36px;"></span>
-            </div>
-
-            <div class="word-card">
-                <div class="romaji" id="romajiDisplay">taberu</div>
-                <div class="hint">Choose the correct meaning.</div>
-                <div class="count" id="questionCount">1 / 10</div>
-            </div>
-
-            <div class="options" id="optionsContainer"></div>
-
-            <button class="next-btn" id="nextBtn">
-                <span class="emoji">→</span> next
-            </button>
+        <div class="gp-bar">
+          <div class="gp-fill" id="globalFill"></div>
         </div>
+      </div>
+
+      <div class="topic-grid" id="topicGrid"></div>
+
+      <div class="footer">
+        Built by Charuth Thameesha · Verified N5 vocabulary
+        <div style="margin-top:6px">
+          <button class="link-btn" id="resetAllBtn">Reset all progress</button>
+        </div>
+      </div>
     </div>
 
-    <script>
-        // ═══════════════════════════════════════════════════════════════
-        //  D I C T I O N A R Y   —   N5  +  beyond
-        // ═══════════════════════════════════════════════════════════════
+    <!-- ===== QUIZ ===== -->
+    <div class="quiz-area" id="quizArea">
+      <div class="quiz-header">
+        <button class="back-btn" id="backBtn" aria-label="Back">‹</button>
+        <span class="topic-label" id="quizTopicLabel">Verbs</span>
+        <button class="romaji-toggle on" id="romajiToggle">ローマ字 ON</button>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="score-bar">
+        <span id="sessionStats">0 ✓ · 0 ✗</span>
+        <span><span id="topicMastered">0</span> / <span id="topicTotal">0</span> mastered</span>
+      </div>
+      <div class="word-card" id="wordCard">
+        <div class="mastered-badge" id="masteredBadge">✓ MASTERED</div>
+        <div class="word-kanji" id="wordKanji">食べる</div>
+        <div class="word-kana" id="wordKana"></div>
+        <div class="word-romaji" id="wordRomaji">taberu</div>
+        <div class="streak-row">
+          <div class="pips" id="streakPips"></div>
+          <span class="streak-label" id="streakLabel">0/3 in a row</span>
+        </div>
+      </div>
+      <div class="options" id="optionsContainer"></div>
+      <button class="next-btn" id="nextBtn">next →</button>
+    </div>
 
-        const DICT = {
+    <!-- ===== RESULTS ===== -->
+    <div class="results" id="resultsArea">
+      <h2 id="resultsTitle">Topic complete!</h2>
+      <div class="big-score" id="bigScore">0<span class="denom">/0</span></div>
+      <div class="score-msg" id="scoreMsg"></div>
 
-            verbs: [
-                { romaji: "taberu", english: "to eat" },
-                { romaji: "nomu", english: "to drink" },
-                { romaji: "miru", english: "to see / watch" },
-                { romaji: "kiku", english: "to hear / listen / ask" },
-                { romaji: "yomu", english: "to read" },
-                { romaji: "kaku", english: "to write" },
-                { romaji: "iku", english: "to go" },
-                { romaji: "kuru", english: "to come" },
-                { romaji: "kaeru", english: "to return" },
-                { romaji: "neru", english: "to sleep" },
-                { romaji: "okiru", english: "to wake up / get up" },
-                { romaji: "hanasu", english: "to speak / talk" },
-                { romaji: "tsukau", english: "to use" },
-                { romaji: "tsukuru", english: "to make / create" },
-                { romaji: "kau", english: "to buy" },
-                { romaji: "uru", english: "to sell" },
-                { romaji: "matsu", english: "to wait" },
-                { romaji: "aruku", english: "to walk" },
-                { romaji: "hashiru", english: "to run" },
-                { romaji: "oyogu", english: "to swim" },
-                { romaji: "benkyou suru", english: "to study" },
-                { romaji: "shigoto suru", english: "to work" },
-                { romaji: "asobu", english: "to play" },
-                { romaji: "utau", english: "to sing" },
-                { romaji: "odoru", english: "to dance" },
-                { romaji: "warau", english: "to laugh" },
-                { romaji: "naku", english: "to cry" },
-                { romaji: "kangaeru", english: "to think" },
-                { romaji: "oshieru", english: "to teach" },
-                { romaji: "manabu", english: "to learn" },
-                { romaji: "sumu", english: "to live / reside" },
-                { romaji: "tatsu", english: "to stand" },
-                { romaji: "suwaru", english: "to sit" },
-                { romaji: "fumu", english: "to step on" },
-                { romaji: "motomeru", english: "to seek / request" },
-                { romaji: "tojiru", english: "to close" },
-                { romaji: "akeru", english: "to open" },
-                { romaji: "wasureru", english: "to forget" },
-                { romaji: "oboeru", english: "to remember" },
-                { romaji: "hajimeru", english: "to begin" },
-                { romaji: "owaru", english: "to end / finish" },
-            ],
+      <div class="session-summary">
+        <div class="summary-cell">
+          <div class="num green" id="sumCorrect">0</div>
+          <div class="cap">Correct</div>
+        </div>
+        <div class="summary-cell">
+          <div class="num red" id="sumWrong">0</div>
+          <div class="cap">Wrong</div>
+        </div>
+        <div class="summary-cell">
+          <div class="num" id="sumMastered">0</div>
+          <div class="cap">Mastered</div>
+        </div>
+      </div>
 
-            adjectives: [
-                { romaji: "ookii", english: "big" },
-                { romaji: "chiisai", english: "small" },
-                { romaji: "takai", english: "high / expensive" },
-                { romaji: "yasui", english: "cheap" },
-                { romaji: "atarashii", english: "new" },
-                { romaji: "furui", english: "old" },
-                { romaji: "atsui", english: "hot (weather)" },
-                { romaji: "samui", english: "cold (weather)" },
-                { romaji: "atatakai", english: "warm" },
-                { romaji: "suzushii", english: "cool / refreshing" },
-                { romaji: "oishii", english: "delicious" },
-                { romaji: "mazui", english: "bad-tasting" },
-                { romaji: "tanoshii", english: "fun / enjoyable" },
-                { romaji: "tsumaranai", english: "boring" },
-                { romaji: "muzukashii", english: "difficult" },
-                { romaji: "yasashii", english: "easy / kind" },
-                { romaji: "hayai", english: "fast / early" },
-                { romaji: "osoi", english: "slow / late" },
-                { romaji: "yoi", english: "good" },
-                { romaji: "warui", english: "bad" },
-                { romaji: "kawaii", english: "cute" },
-                { romaji: "kakkoii", english: "cool / stylish" },
-                { romaji: "shizuka", english: "quiet" },
-                { romaji: "nigiyaka", english: "lively / bustling" },
-                { romaji: "kirei", english: "beautiful / clean" },
-                { romaji: "yuumei", english: "famous" },
-                { romaji: "genki", english: "healthy / energetic" },
-                { romaji: "hima", english: "free (time)" },
-                { romaji: "isogashii", english: "busy" },
-                { romaji: "majime", english: "serious / earnest" },
-                { romaji: "akarui", english: "bright / cheerful" },
-                { romaji: "kurai", english: "dark / gloomy" },
-                { romaji: "omoshiroi", english: "interesting" },
-                { romaji: "tsuyoi", english: "strong" },
-                { romaji: "yowai", english: "weak" },
-            ],
+      <div class="missed-list" id="missedList"></div>
 
-            nouns: [
-                { romaji: "hito", english: "person" },
-                { romaji: "mono", english: "thing" },
-                { romaji: "jikan", english: "time" },
-                { romaji: "hi", english: "day" },
-                { romaji: "tsuki", english: "month / moon" },
-                { romaji: "toshi", english: "year / age" },
-                { romaji: "tomodachi", english: "friend" },
-                { romaji: "kazoku", english: "family" },
-                { romaji: "chichi", english: "father" },
-                { romaji: "haha", english: "mother" },
-                { romaji: "ani", english: "older brother" },
-                { romaji: "ane", english: "older sister" },
-                { romaji: "otouto", english: "younger brother" },
-                { romaji: "imouto", english: "younger sister" },
-                { romaji: "sensei", english: "teacher" },
-                { romaji: "gakusei", english: "student" },
-                { romaji: "kaisha", english: "company" },
-                { romaji: "gakkou", english: "school" },
-                { romaji: "ie", english: "house / home" },
-                { romaji: "heya", english: "room" },
-                { romaji: "niwa", english: "garden" },
-                { romaji: "machi", english: "town" },
-                { romaji: "mura", english: "village" },
-                { romaji: "toshi", english: "city" },
-                { romaji: "kuni", english: "country" },
-                { romaji: "gengo", english: "language" },
-                { romaji: "nihongo", english: "Japanese language" },
-                { romaji: "eigo", english: "English language" },
-                { romaji: "hon", english: "book" },
-                { romaji: "shinbun", english: "newspaper" },
-                { romaji: "zasshi", english: "magazine" },
-                { romaji: "denwa", english: "telephone" },
-                { romaji: "kuruma", english: "car" },
-                { romaji: "densha", english: "train" },
-                { romaji: "basu", english: "bus" },
-                { romaji: "hikouki", english: "airplane" },
-                { romaji: "fune", english: "ship / boat" },
-                { romaji: "jitensha", english: "bicycle" },
-                { romaji: "tabemono", english: "food" },
-                { romaji: "nomimono", english: "drink / beverage" },
-                { romaji: "kudamono", english: "fruit" },
-                { romaji: "yasai", english: "vegetable" },
-                { romaji: "niku", english: "meat" },
-                { romaji: "sakana", english: "fish" },
-                { romaji: "tamago", english: "egg" },
-                { romaji: "gyuunyuu", english: "milk" },
-                { romaji: "mizu", english: "water" },
-                { romaji: "ocha", english: "tea" },
-                { romaji: "koohii", english: "coffee" },
-                { romaji: "biiru", english: "beer" },
-                { romaji: "wain", english: "wine" },
-                { romaji: "tenki", english: "weather" },
-                { romaji: "ame", english: "rain" },
-                { romaji: "yuki", english: "snow" },
-                { romaji: "kaze", english: "wind" },
-                { romaji: "kumo", english: "cloud" },
-                { romaji: "sora", english: "sky" },
-                { romaji: "umi", english: "sea / ocean" },
-                { romaji: "yama", english: "mountain" },
-                { romaji: "kawa", english: "river" },
-                { romaji: "hana", english: "flower" },
-                { romaji: "ki", english: "tree" },
-                { romaji: "inu", english: "dog" },
-                { romaji: "neko", english: "cat" },
-                { romaji: "tori", english: "bird" },
-                { romaji: "uma", english: "horse" },
-                { romaji: "ushi", english: "cow" },
-                { romaji: "buta", english: "pig" },
-                { romaji: "hitsuji", english: "sheep" },
-                { romaji: "saru", english: "monkey" },
-                { romaji: "kuma", english: "bear" },
-                { romaji: "ookami", english: "wolf" },
-                { romaji: "kitsune", english: "fox" },
-            ],
+      <div class="results-actions">
+        <button class="btn-secondary" id="resultsHomeBtn">Topics</button>
+        <button class="btn-primary" id="resultsRetryBtn">Continue</button>
+      </div>
+    </div>
+  </div>
 
-            fruits: [
-                { romaji: "ringo", english: "apple" },
-                { romaji: "banana", english: "banana" },
-                { romaji: "orenji", english: "orange" },
-                { romaji: "ichigo", english: "strawberry" },
-                { romaji: "budou", english: "grape" },
-                { romaji: "suika", english: "watermelon" },
-                { romaji: "momo", english: "peach" },
-                { romaji: "nashi", english: "pear" },
-                { romaji: "kaki", english: "persimmon" },
-                { romaji: "remon", english: "lemon" },
-                { romaji: "kiwi", english: "kiwi" },
-                { romaji: "mango", english: "mango" },
-                { romaji: "painappuru", english: "pineapple" },
-                { romaji: "meron", english: "melon" },
-                { romaji: "zakuro", english: "pomegranate" },
-                { romaji: "ananasu", english: "pineapple" },
-                { romaji: "kokonatsu", english: "coconut" },
-                { romaji: "abokado", english: "avocado" },
-            ],
+  <script>
+    // ═════════════════════════════════════════════════════════════════════
+    //  ACCURATE N5 VOCABULARY  (UNTOUCHED — the heart of the app)
+    //  Each word appears ONCE. Topic tags determine which quizzes it shows in.
+    //  Format: { kanji, kana, romaji, english, topics: [...] }
+    //  - kanji omitted when the word is normally written in kana
+    //  - kana is always the reading
+    // ═════════════════════════════════════════════════════════════════════
 
-            animals: [
-                { romaji: "inu", english: "dog" },
-                { romaji: "neko", english: "cat" },
-                { romaji: "tori", english: "bird" },
-                { romaji: "sakana", english: "fish" },
-                { romaji: "uma", english: "horse" },
-                { romaji: "ushi", english: "cow" },
-                { romaji: "buta", english: "pig" },
-                { romaji: "hitsuji", english: "sheep" },
-                { romaji: "saru", english: "monkey" },
-                { romaji: "kuma", english: "bear" },
-                { romaji: "ookami", english: "wolf" },
-                { romaji: "kitsune", english: "fox" },
-                { romaji: "usagi", english: "rabbit" },
-                { romaji: "nezumi", english: "mouse / rat" },
-                { romaji: "risu", english: "squirrel" },
-                { romaji: "tonakai", english: "reindeer" },
-                { romaji: "raion", english: "lion" },
-                { romaji: "tora", english: "tiger" },
-                { romaji: "zou", english: "elephant" },
-                { romaji: "kirin", english: "giraffe" },
-                { romaji: "panda", english: "panda" },
-                { romaji: "kangaruu", english: "kangaroo" },
-                { romaji: "wani", english: "crocodile" },
-                { romaji: "hebi", english: "snake" },
-                { romaji: "kame", english: "turtle" },
-            ],
+    const WORDS = [
+      // ── PEOPLE & PRONOUNS ──
+      { kanji: "私", kana: "わたし", romaji: "watashi", english: "I / me", topics: ["people"] },
+      { kanji: "僕", kana: "ぼく", romaji: "boku", english: "I (male)", topics: ["people"] },
+      { kana: "あなた", romaji: "anata", english: "you", topics: ["people"] },
+      { kanji: "彼", kana: "かれ", romaji: "kare", english: "he / boyfriend", topics: ["people"] },
+      { kanji: "彼女", kana: "かのじょ", romaji: "kanojo", english: "she / girlfriend", topics: ["people"] },
+      { kanji: "皆さん", kana: "みなさん", romaji: "minasan", english: "everyone", topics: ["people"] },
+      { kanji: "人", kana: "ひと", romaji: "hito", english: "person", topics: ["people"] },
+      { kanji: "方", kana: "かた", romaji: "kata", english: "person (polite)", topics: ["people"] },
+      { kanji: "子供", kana: "こども", romaji: "kodomo", english: "child", topics: ["people", "family"] },
+      { kanji: "男の子", kana: "おとこのこ", romaji: "otoko no ko", english: "boy", topics: ["people"] },
+      { kanji: "女の子", kana: "おんなのこ", romaji: "onna no ko", english: "girl", topics: ["people"] },
+      { kanji: "男の人", kana: "おとこのひと", romaji: "otoko no hito", english: "man", topics: ["people"] },
+      { kanji: "女の人", kana: "おんなのひと", romaji: "onna no hito", english: "woman", topics: ["people"] },
+      { kanji: "男", kana: "おとこ", romaji: "otoko", english: "man / male", topics: ["people"] },
+      { kanji: "女", kana: "おんな", romaji: "onna", english: "woman / female", topics: ["people"] },
+      { kanji: "友達", kana: "ともだち", romaji: "tomodachi", english: "friend", topics: ["people"] },
+      { kanji: "先生", kana: "せんせい", romaji: "sensei", english: "teacher", topics: ["people", "school", "work"] },
+      { kanji: "学生", kana: "がくせい", romaji: "gakusei", english: "student", topics: ["people", "school"] },
+      { kanji: "生徒", kana: "せいと", romaji: "seito", english: "pupil / student", topics: ["people", "school"] },
+      { kanji: "会社員", kana: "かいしゃいん", romaji: "kaishain", english: "company employee", topics: ["people", "work"] },
+      { kanji: "医者", kana: "いしゃ", romaji: "isha", english: "doctor", topics: ["people", "work", "health"] },
+      { kanji: "警官", kana: "けいかん", romaji: "keikan", english: "police officer", topics: ["people", "work"] },
+      { kanji: "お客さん", kana: "おきゃくさん", romaji: "okyakusan", english: "customer / guest", topics: ["people"] },
+      { kanji: "主人", kana: "しゅじん", romaji: "shujin", english: "husband", topics: ["people", "family"] },
+      { kanji: "妻", kana: "つま", romaji: "tsuma", english: "wife", topics: ["people", "family"] },
+      { kanji: "私たち", kana: "わたしたち", romaji: "watashitachi", english: "we", topics: ["people"] },
+      { kana: "あなたたち", romaji: "anatatachi", english: "you (plural)", topics: ["people"] },
+      { kanji: "彼ら", kana: "かれら", romaji: "karera", english: "they (male/mixed)", topics: ["people"] },
+      { kanji: "彼女ら", kana: "かのじょら", romaji: "kanojora", english: "they (female)", topics: ["people"] },
+      { kanji: "皆", kana: "みな", romaji: "mina", english: "everyone", topics: ["people"] },
+      { kanji: "誰か", kana: "だれか", romaji: "dareka", english: "someone", topics: ["people", "questions"] },
+      { kanji: "何か", kana: "なにか", romaji: "nanika", english: "something", topics: ["people", "questions"] },
+      { kana: "どこか", romaji: "dokoka", english: "somewhere", topics: ["people", "questions"] },
+      { kana: "いつか", romaji: "itsuka", english: "sometime", topics: ["people", "time"] },
+      { kanji: "赤ちゃん", kana: "あかちゃん", romaji: "akachan", english: "baby", topics: ["people", "family"] },
+      { kanji: "大人", kana: "おとな", romaji: "otona", english: "adult", topics: ["people"] },
+      { kanji: "留学生", kana: "りゅうがくせい", romaji: "ryuugakusei", english: "international student", topics: ["people", "school"] },
+      { kanji: "外国人", kana: "がいこくじん", romaji: "gaikokujin", english: "foreigner", topics: ["people", "nouns"] },
 
-            food: [
-                { romaji: "gohan", english: "cooked rice / meal" },
-                { romaji: "pan", english: "bread" },
-                { romaji: "niku", english: "meat" },
-                { romaji: "sakana", english: "fish" },
-                { romaji: "tamago", english: "egg" },
-                { romaji: "gyuunyuu", english: "milk" },
-                { romaji: "mizu", english: "water" },
-                { romaji: "ocha", english: "tea" },
-                { romaji: "koohii", english: "coffee" },
-                { romaji: "biiru", english: "beer" },
-                { romaji: "wain", english: "wine" },
-                { romaji: "kudamono", english: "fruit" },
-                { romaji: "yasai", english: "vegetable" },
-                { romaji: "satou", english: "sugar" },
-                { romaji: "shio", english: "salt" },
-                { romaji: "kome", english: "rice (uncooked)" },
-                { romaji: "men", english: "noodles" },
-                { romaji: "soup", english: "soup" },
-                { romaji: "salada", english: "salad" },
-                { romaji: "aisu", english: "ice cream" },
-                { romaji: "keki", english: "cake" },
-                { romaji: "chokoreeto", english: "chocolate" },
-                { romaji: "hambāgā", english: "hamburger" },
-                { romaji: "piza", english: "pizza" },
-                { romaji: "sushi", english: "sushi" },
-                { romaji: "ramen", english: "ramen" },
-            ],
+      // ── FAMILY ──
+      { kanji: "家族", kana: "かぞく", romaji: "kazoku", english: "family", topics: ["family"] },
+      { kanji: "父", kana: "ちち", romaji: "chichi", english: "my father", topics: ["family"] },
+      { kanji: "母", kana: "はは", romaji: "haha", english: "my mother", topics: ["family"] },
+      { kanji: "お父さん", kana: "おとうさん", romaji: "otousan", english: "father (polite)", topics: ["family"] },
+      { kanji: "お母さん", kana: "おかあさん", romaji: "okaasan", english: "mother (polite)", topics: ["family"] },
+      { kanji: "兄", kana: "あに", romaji: "ani", english: "my older brother", topics: ["family"] },
+      { kanji: "姉", kana: "あね", romaji: "ane", english: "my older sister", topics: ["family"] },
+      { kanji: "お兄さん", kana: "おにいさん", romaji: "oniisan", english: "older brother (polite)", topics: ["family"] },
+      { kanji: "お姉さん", kana: "おねえさん", romaji: "oneesan", english: "older sister (polite)", topics: ["family"] },
+      { kanji: "弟", kana: "おとうと", romaji: "otouto", english: "younger brother", topics: ["family"] },
+      { kanji: "妹", kana: "いもうと", romaji: "imouto", english: "younger sister", topics: ["family"] },
+      { kanji: "祖父", kana: "そふ", romaji: "sofu", english: "grandfather", topics: ["family"] },
+      { kanji: "祖母", kana: "そぼ", romaji: "sobo", english: "grandmother", topics: ["family"] },
+      { kanji: "おじいさん", kana: "おじいさん", romaji: "ojiisan", english: "grandfather / old man", topics: ["family"] },
+      { kanji: "おばあさん", kana: "おばあさん", romaji: "obaasan", english: "grandmother / old woman", topics: ["family"] },
+      { kanji: "おじさん", kana: "おじさん", romaji: "ojisan", english: "uncle", topics: ["family"] },
+      { kanji: "おばさん", kana: "おばさん", romaji: "obasan", english: "aunt", topics: ["family"] },
+      { kanji: "従兄弟", kana: "いとこ", romaji: "itoko", english: "cousin", topics: ["family"] },
+      { kanji: "息子", kana: "むすこ", romaji: "musuko", english: "son", topics: ["family"] },
+      { kanji: "娘", kana: "むすめ", romaji: "musume", english: "daughter", topics: ["family"] },
+      { kanji: "夫", kana: "おっと", romaji: "otto", english: "husband", topics: ["family"] },
+      { kanji: "両親", kana: "りょうしん", romaji: "ryoushin", english: "parents", topics: ["family"] },
+      { kanji: "兄弟", kana: "きょうだい", romaji: "kyoudai", english: "siblings", topics: ["family"] },
+      { kanji: "家内", kana: "かない", romaji: "kanai", english: "my wife", topics: ["family"] },
+      { kanji: "奥さん", kana: "おくさん", romaji: "okusan", english: "someone else's wife", topics: ["family"] },
+      { kanji: "ご主人", kana: "ごしゅじん", romaji: "goshujin", english: "someone else's husband", topics: ["family"] },
+      { kanji: "親", kana: "おや", romaji: "oya", english: "parent", topics: ["family"] },
+      { kanji: "子", kana: "こ", romaji: "ko", english: "child", topics: ["family"] },
+      { kanji: "孫", kana: "まご", romaji: "mago", english: "grandchild", topics: ["family"] },
 
-            body: [
-                { romaji: "atama", english: "head" },
-                { romaji: "kami", english: "hair" },
-                { romaji: "me", english: "eye" },
-                { romaji: "mimi", english: "ear" },
-                { romaji: "hana", english: "nose" },
-                { romaji: "kuchi", english: "mouth" },
-                { romaji: "te", english: "hand" },
-                { romaji: "ashi", english: "foot / leg" },
-                { romaji: "mune", english: "chest" },
-                { romaji: "senaka", english: "back" },
-                { romaji: "onaka", english: "stomach" },
-                { romaji: "koshi", english: "hip / waist" },
-                { romaji: "hiza", english: "knee" },
-                { romaji: "kata", english: "shoulder" },
-                { romaji: "kubi", english: "neck" },
-                { romaji: "yubi", english: "finger / toe" },
-                { romaji: "tsume", english: "nail" },
-                { romaji: "hoho", english: "cheek" },
-                { romaji: "ago", english: "chin" },
-                { romaji: "hitai", english: "forehead" },
-            ],
+      // ── NUMBERS ──
+      { kanji: "零", kana: "れい", romaji: "rei", english: "zero", topics: ["numbers"] },
+      { kanji: "一", kana: "いち", romaji: "ichi", english: "one", topics: ["numbers"] },
+      { kanji: "二", kana: "に", romaji: "ni", english: "two", topics: ["numbers"] },
+      { kanji: "三", kana: "さん", romaji: "san", english: "three", topics: ["numbers"] },
+      { kanji: "四", kana: "よん", romaji: "yon", english: "four", topics: ["numbers"] },
+      { kanji: "五", kana: "ご", romaji: "go", english: "five", topics: ["numbers"] },
+      { kanji: "六", kana: "ろく", romaji: "roku", english: "six", topics: ["numbers"] },
+      { kanji: "七", kana: "なな", romaji: "nana", english: "seven", topics: ["numbers"] },
+      { kanji: "八", kana: "はち", romaji: "hachi", english: "eight", topics: ["numbers"] },
+      { kanji: "九", kana: "きゅう", romaji: "kyuu", english: "nine", topics: ["numbers"] },
+      { kanji: "十", kana: "じゅう", romaji: "juu", english: "ten", topics: ["numbers"] },
+      { kanji: "百", kana: "ひゃく", romaji: "hyaku", english: "hundred", topics: ["numbers"] },
+      { kanji: "千", kana: "せん", romaji: "sen", english: "thousand", topics: ["numbers"] },
+      { kanji: "万", kana: "まん", romaji: "man", english: "ten thousand", topics: ["numbers"] },
+      { kanji: "一つ", kana: "ひとつ", romaji: "hitotsu", english: "one (thing)", topics: ["numbers"] },
+      { kanji: "二つ", kana: "ふたつ", romaji: "futatsu", english: "two (things)", topics: ["numbers"] },
+      { kanji: "三つ", kana: "みっつ", romaji: "mittsu", english: "three (things)", topics: ["numbers"] },
+      { kanji: "四つ", kana: "よっつ", romaji: "yottsu", english: "four (things)", topics: ["numbers"] },
+      { kanji: "五つ", kana: "いつつ", romaji: "itsutsu", english: "five (things)", topics: ["numbers"] },
+      { kanji: "六つ", kana: "むっつ", romaji: "muttsu", english: "six (things)", topics: ["numbers"] },
+      { kanji: "七つ", kana: "ななつ", romaji: "nanatsu", english: "seven (things)", topics: ["numbers"] },
+      { kanji: "八つ", kana: "やっつ", romaji: "yattsu", english: "eight (things)", topics: ["numbers"] },
+      { kanji: "九つ", kana: "ここのつ", romaji: "kokonotsu", english: "nine (things)", topics: ["numbers"] },
+      { kanji: "十", kana: "とお", romaji: "too", english: "ten (things)", topics: ["numbers"] },
+      { kanji: "一人", kana: "ひとり", romaji: "hitori", english: "one person / alone", topics: ["numbers"] },
+      { kanji: "二人", kana: "ふたり", romaji: "futari", english: "two people", topics: ["numbers"] },
+      { kanji: "三人", kana: "さんにん", romaji: "sannin", english: "three people", topics: ["numbers"] },
+      { kanji: "〜人", kana: "にん", romaji: "nin", english: "counter for people", topics: ["numbers"] },
+      { kanji: "〜本", kana: "ほん", romaji: "hon", english: "counter for long objects", topics: ["numbers"] },
+      { kanji: "〜枚", kana: "まい", romaji: "mai", english: "counter for flat objects", topics: ["numbers"] },
+      { kanji: "〜台", kana: "だい", romaji: "dai", english: "counter for machines/vehicles", topics: ["numbers"] },
+      { kanji: "〜匹", kana: "ひき", romaji: "hiki", english: "counter for small animals", topics: ["numbers"] },
+      { kanji: "〜歳", kana: "さい", romaji: "sai", english: "counter for age", topics: ["numbers"] },
+      { kanji: "〜回", kana: "かい", romaji: "kai", english: "counter for times", topics: ["numbers"] },
+      { kanji: "〜階", kana: "かい", romaji: "kai", english: "counter for floors", topics: ["numbers"] },
+      { kanji: "〜冊", kana: "さつ", romaji: "satsu", english: "counter for books", topics: ["numbers"] },
+      { kanji: "〜個", kana: "こ", romaji: "ko", english: "counter for small items", topics: ["numbers"] },
+      { kanji: "〜杯", kana: "はい", romaji: "hai", english: "counter for cups/glasses", topics: ["numbers"] },
+      { kanji: "〜足", kana: "そく", romaji: "soku", english: "counter for pairs of footwear", topics: ["numbers"] },
+      { kanji: "〜着", kana: "ちゃく", romaji: "chaku", english: "counter for suits/outfits", topics: ["numbers"] },
+      { kanji: "〜羽", kana: "わ", romaji: "wa", english: "counter for birds/rabbits", topics: ["numbers"] },
+      { kanji: "〜頭", kana: "とう", romaji: "tou", english: "counter for large animals", topics: ["numbers"] },
+      { kanji: "何歳", kana: "なんさい", romaji: "nansai", english: "how old", topics: ["numbers", "questions"] },
+      { kana: "たくさん", romaji: "takusan", english: "many", topics: ["numbers"] },
+      { kanji: "大勢", kana: "おおぜい", romaji: "oozei", english: "many people", topics: ["numbers"] },
+      { kanji: "初めて", kana: "はじめて", romaji: "hajimete", english: "for the first time", topics: ["numbers", "time"] },
+      { kanji: "最後", kana: "さいご", romaji: "saigo", english: "last", topics: ["numbers", "time"] },
+      { kanji: "次", kana: "つぎ", romaji: "tsugi", english: "next", topics: ["numbers", "time"] },
+      { kanji: "半", kana: "はん", romaji: "han", english: "half", topics: ["numbers"] },
+      { kanji: "倍", kana: "ばい", romaji: "bai", english: "double", topics: ["numbers"] },
 
-            family: [
-                { romaji: "kazoku", english: "family" },
-                { romaji: "chichi", english: "father" },
-                { romaji: "haha", english: "mother" },
-                { romaji: "ani", english: "older brother" },
-                { romaji: "ane", english: "older sister" },
-                { romaji: "otouto", english: "younger brother" },
-                { romaji: "imouto", english: "younger sister" },
-                { romaji: "sofu", english: "grandfather" },
-                { romaji: "sobo", english: "grandmother" },
-                { romaji: "musuko", english: "son" },
-                { romaji: "musume", english: "daughter" },
-                { romaji: "shujin", english: "husband" },
-                { romaji: "tsuma", english: "wife" },
-                { romaji: "oji", english: "uncle" },
-                { romaji: "oba", english: "aunt" },
-                { romaji: "itoko", english: "cousin" },
-            ],
+      // ── TIME ──
+      { kanji: "時間", kana: "じかん", romaji: "jikan", english: "time / hour", topics: ["time"] },
+      { kanji: "時", kana: "とき", romaji: "toki", english: "time / moment", topics: ["time"] },
+      { kanji: "朝", kana: "あさ", romaji: "asa", english: "morning", topics: ["time"] },
+      { kanji: "昼", kana: "ひる", romaji: "hiru", english: "noon / daytime", topics: ["time"] },
+      { kanji: "夜", kana: "よる", romaji: "yoru", english: "night", topics: ["time"] },
+      { kanji: "晩", kana: "ばん", romaji: "ban", english: "evening", topics: ["time"] },
+      { kanji: "昨日", kana: "きのう", romaji: "kinou", english: "yesterday", topics: ["time"] },
+      { kanji: "今日", kana: "きょう", romaji: "kyou", english: "today", topics: ["time"] },
+      { kanji: "明日", kana: "あした", romaji: "ashita", english: "tomorrow", topics: ["time"] },
+      { kanji: "今朝", kana: "けさ", romaji: "kesa", english: "this morning", topics: ["time"] },
+      { kanji: "今晩", kana: "こんばん", romaji: "konban", english: "this evening", topics: ["time"] },
+      { kanji: "週末", kana: "しゅうまつ", romaji: "shuumatsu", english: "weekend", topics: ["time"] },
+      { kanji: "月曜日", kana: "げつようび", romaji: "getsuyoubi", english: "Monday", topics: ["time"] },
+      { kanji: "火曜日", kana: "かようび", romaji: "kayoubi", english: "Tuesday", topics: ["time"] },
+      { kanji: "水曜日", kana: "すいようび", romaji: "suiyoubi", english: "Wednesday", topics: ["time"] },
+      { kanji: "木曜日", kana: "もくようび", romaji: "mokuyoubi", english: "Thursday", topics: ["time"] },
+      { kanji: "金曜日", kana: "きんようび", romaji: "kinyoubi", english: "Friday", topics: ["time"] },
+      { kanji: "土曜日", kana: "どようび", romaji: "doyoubi", english: "Saturday", topics: ["time"] },
+      { kanji: "日曜日", kana: "にちようび", romaji: "nichiyoubi", english: "Sunday", topics: ["time"] },
+      { kanji: "年", kana: "とし", romaji: "toshi", english: "year", topics: ["time"] },
+      { kanji: "月", kana: "つき", romaji: "tsuki", english: "month / moon", topics: ["time", "weather"] },
+      { kanji: "週", kana: "しゅう", romaji: "shuu", english: "week", topics: ["time"] },
+      { kanji: "日", kana: "ひ", romaji: "hi", english: "day / sun", topics: ["time", "weather"] },
+      { kanji: "一日", kana: "いちにち", romaji: "ichinichi", english: "one day", topics: ["time"] },
+      { kanji: "一年", kana: "いちねん", romaji: "ichinen", english: "one year", topics: ["time"] },
+      { kanji: "一ヶ月", kana: "いっかげつ", romaji: "ikkagetsu", english: "one month", topics: ["time"] },
+      { kanji: "一週間", kana: "いっしゅうかん", romaji: "isshuukan", english: "one week", topics: ["time"] },
+      { kanji: "一時間", kana: "いちじかん", romaji: "ichijikan", english: "one hour", topics: ["time"] },
+      { kanji: "一分", kana: "いっぷん", romaji: "ippun", english: "one minute", topics: ["time"] },
+      { kanji: "午前", kana: "ごぜん", romaji: "gozen", english: "AM / morning", topics: ["time"] },
+      { kanji: "午後", kana: "ごご", romaji: "gogo", english: "PM / afternoon", topics: ["time"] },
+      { kanji: "今", kana: "いま", romaji: "ima", english: "now", topics: ["time"] },
+      { kanji: "後", kana: "あと", romaji: "ato", english: "after / later", topics: ["time"] },
+      { kanji: "前", kana: "まえ", romaji: "mae", english: "before / front", topics: ["time", "directions"] },
+      { kanji: "来週", kana: "らいしゅう", romaji: "raishuu", english: "next week", topics: ["time"] },
+      { kanji: "来月", kana: "らいげつ", romaji: "raigetsu", english: "next month", topics: ["time"] },
+      { kanji: "来年", kana: "らいねん", romaji: "rainen", english: "next year", topics: ["time"] },
+      { kanji: "先週", kana: "せんしゅう", romaji: "senshuu", english: "last week", topics: ["time"] },
+      { kanji: "先月", kana: "せんげつ", romaji: "sengetsu", english: "last month", topics: ["time"] },
+      { kanji: "去年", kana: "きょねん", romaji: "kyonen", english: "last year", topics: ["time"] },
+      { kanji: "今週", kana: "こんしゅう", romaji: "konshuu", english: "this week", topics: ["time"] },
+      { kanji: "今月", kana: "こんげつ", romaji: "kongetsu", english: "this month", topics: ["time"] },
+      { kanji: "今年", kana: "ことし", romaji: "kotoshi", english: "this year", topics: ["time"] },
+      { kanji: "毎日", kana: "まいにち", romaji: "mainichi", english: "every day", topics: ["time"] },
+      { kanji: "毎週", kana: "まいしゅう", romaji: "maishuu", english: "every week", topics: ["time"] },
+      { kanji: "毎月", kana: "まいつき", romaji: "maitsuki", english: "every month", topics: ["time"] },
+      { kanji: "毎年", kana: "まいとし", romaji: "maitoshi", english: "every year", topics: ["time"] },
+      { kanji: "毎朝", kana: "まいあさ", romaji: "maiasa", english: "every morning", topics: ["time"] },
+      { kanji: "毎晩", kana: "まいばん", romaji: "maiban", english: "every night", topics: ["time"] },
+      { kanji: "明後日", kana: "あさって", romaji: "asatte", english: "day after tomorrow", topics: ["time"] },
+      { kanji: "一昨日", kana: "おととい", romaji: "ototoi", english: "day before yesterday", topics: ["time"] },
+      { kanji: "昨晩", kana: "さくばん", romaji: "sakuban", english: "last night", topics: ["time"] },
+      { kanji: "夕方", kana: "ゆうがた", romaji: "yuugata", english: "evening", topics: ["time"] },
+      { kanji: "夜中", kana: "よなか", romaji: "yonaka", english: "midnight", topics: ["time"] },
+      { kanji: "将来", kana: "しょうらい", romaji: "shourai", english: "future", topics: ["time"] },
+      { kanji: "最近", kana: "さいきん", romaji: "saikin", english: "recently", topics: ["time"] },
+      { kanji: "この前", kana: "このまえ", romaji: "konomae", english: "the other day", topics: ["time"] },
+      { kanji: "今度", kana: "こんど", romaji: "kondo", english: "next time", topics: ["time"] },
+      { kana: "もうすぐ", romaji: "mousugu", english: "soon", topics: ["time"] },
+      { kana: "しばらく", romaji: "shibaraku", english: "for a while", topics: ["time"] },
+      { kana: "ずっと", romaji: "zutto", english: "all the time", topics: ["time"] },
+      { kanji: "誕生日", kana: "たんじょうび", romaji: "tanjoubi", english: "birthday", topics: ["time"] },
+      { kanji: "休み", kana: "やすみ", romaji: "yasumi", english: "holiday, rest", topics: ["time"] },
+      { kanji: "夏休み", kana: "なつやすみ", romaji: "natsuyasumi", english: "summer vacation", topics: ["time"] },
+      { kanji: "冬休み", kana: "ふゆやすみ", romaji: "fuyuyasumi", english: "winter vacation", topics: ["time"] },
+      // MONTHS
+      { kanji: "一月", kana: "いちがつ", romaji: "ichigatsu", english: "January", topics: ["time"] },
+      { kanji: "二月", kana: "にがつ", romaji: "nigatsu", english: "February", topics: ["time"] },
+      { kanji: "三月", kana: "さんがつ", romaji: "sangatsu", english: "March", topics: ["time"] },
+      { kanji: "四月", kana: "しがつ", romaji: "shigatsu", english: "April", topics: ["time"] },
+      { kanji: "五月", kana: "ごがつ", romaji: "gogatsu", english: "May", topics: ["time"] },
+      { kanji: "六月", kana: "ろくがつ", romaji: "rokugatsu", english: "June", topics: ["time"] },
+      { kanji: "七月", kana: "しちがつ", romaji: "shichigatsu", english: "July", topics: ["time"] },
+      { kanji: "八月", kana: "はちがつ", romaji: "hachigatsu", english: "August", topics: ["time"] },
+      { kanji: "九月", kana: "くがつ", romaji: "kugatsu", english: "September", topics: ["time"] },
+      { kanji: "十月", kana: "じゅうがつ", romaji: "juugatsu", english: "October", topics: ["time"] },
+      { kanji: "十一月", kana: "じゅういちがつ", romaji: "juuichigatsu", english: "November", topics: ["time"] },
+      { kanji: "十二月", kana: "じゅうにがつ", romaji: "juunigatsu", english: "December", topics: ["time"] },
+      // DATES
+      { kanji: "一日", kana: "ついたち", romaji: "tsuitachi", english: "1st day of month", topics: ["time"] },
+      { kanji: "二日", kana: "ふつか", romaji: "futsuka", english: "2nd day of month", topics: ["time"] },
+      { kanji: "三日", kana: "みっか", romaji: "mikka", english: "3rd day of month", topics: ["time"] },
+      { kanji: "四日", kana: "よっか", romaji: "yokka", english: "4th day of month", topics: ["time"] },
+      { kanji: "五日", kana: "いつか", romaji: "itsuka", english: "5th day of month", topics: ["time"] },
+      { kanji: "六日", kana: "むいか", romaji: "muika", english: "6th day of month", topics: ["time"] },
+      { kanji: "七日", kana: "なのか", romaji: "nanoka", english: "7th day of month", topics: ["time"] },
+      { kanji: "八日", kana: "ようか", romaji: "youka", english: "8th day of month", topics: ["time"] },
+      { kanji: "九日", kana: "ここのか", romaji: "kokonoka", english: "9th day of month", topics: ["time"] },
+      { kanji: "十日", kana: "とおか", romaji: "tooka", english: "10th day of month", topics: ["time"] },
+      { kanji: "二十日", kana: "はつか", romaji: "hatsuka", english: "20th day of month", topics: ["time"] },
 
-            colors: [
-                { romaji: "aka", english: "red" },
-                { romaji: "ao", english: "blue" },
-                { romaji: "kiiro", english: "yellow" },
-                { romaji: "midori", english: "green" },
-                { romaji: "shiro", english: "white" },
-                { romaji: "kuro", english: "black" },
-                { romaji: "murasaki", english: "purple" },
-                { romaji: "pinku", english: "pink" },
-                { romaji: "orenji", english: "orange (color)" },
-                { romaji: "chairo", english: "brown" },
-                { romaji: "haiiro", english: "gray" },
-                { romaji: "kin'iro", english: "gold" },
-                { romaji: "gin'iro", english: "silver" },
-                { romaji: "mizuiro", english: "light blue" },
-            ],
+      // ── VERBS (all together) ──
+      { kanji: "書く", kana: "かく", romaji: "kaku", english: "to write", topics: ["verbs"] },
+      { kanji: "読む", kana: "よむ", romaji: "yomu", english: "to read", topics: ["verbs"] },
+      { kanji: "聞く", kana: "きく", romaji: "kiku", english: "to listen / to ask", topics: ["verbs"] },
+      { kanji: "話す", kana: "はなす", romaji: "hanasu", english: "to speak", topics: ["verbs"] },
+      { kanji: "待つ", kana: "まつ", romaji: "matsu", english: "to wait", topics: ["verbs"] },
+      { kanji: "歩く", kana: "あるく", romaji: "aruku", english: "to walk", topics: ["verbs"] },
+      { kanji: "走る", kana: "はしる", romaji: "hashiru", english: "to run", topics: ["verbs"] },
+      { kanji: "泳ぐ", kana: "およぐ", romaji: "oyogu", english: "to swim", topics: ["verbs"] },
+      { kanji: "遊ぶ", kana: "あそぶ", romaji: "asobu", english: "to play", topics: ["verbs"] },
+      { kanji: "歌う", kana: "うたう", romaji: "utau", english: "to sing", topics: ["verbs"] },
+      { kanji: "踊る", kana: "おどる", romaji: "odoru", english: "to dance", topics: ["verbs"] },
+      { kanji: "笑う", kana: "わらう", romaji: "warau", english: "to laugh", topics: ["verbs"] },
+      { kanji: "泣く", kana: "なく", romaji: "naku", english: "to cry", topics: ["verbs"] },
+      { kanji: "買う", kana: "かう", romaji: "kau", english: "to buy", topics: ["verbs"] },
+      { kanji: "売る", kana: "うる", romaji: "uru", english: "to sell", topics: ["verbs"] },
+      { kanji: "使う", kana: "つかう", romaji: "tsukau", english: "to use", topics: ["verbs"] },
+      { kanji: "作る", kana: "つくる", romaji: "tsukuru", english: "to make", topics: ["verbs"] },
+      { kanji: "帰る", kana: "かえる", romaji: "kaeru", english: "to return home", topics: ["verbs"] },
+      { kanji: "立つ", kana: "たつ", romaji: "tatsu", english: "to stand", topics: ["verbs"] },
+      { kanji: "座る", kana: "すわる", romaji: "suwaru", english: "to sit", topics: ["verbs"] },
+      { kanji: "飲む", kana: "のむ", romaji: "nomu", english: "to drink", topics: ["verbs"] },
+      { kanji: "持つ", kana: "もつ", romaji: "motsu", english: "to hold / to carry", topics: ["verbs"] },
+      { kanji: "分かる", kana: "わかる", romaji: "wakaru", english: "to understand", topics: ["verbs"] },
+      { kanji: "知る", kana: "しる", romaji: "shiru", english: "to know", topics: ["verbs"] },
+      { kanji: "降る", kana: "ふる", romaji: "furu", english: "to fall (rain/snow)", topics: ["verbs"] },
+      { kanji: "言う", kana: "いう", romaji: "iu", english: "to say", topics: ["verbs"] },
+      { kanji: "会う", kana: "あう", romaji: "au", english: "to meet", topics: ["verbs"] },
+      { kanji: "洗う", kana: "あらう", romaji: "arau", english: "to wash", topics: ["verbs"] },
+      { kanji: "急ぐ", kana: "いそぐ", romaji: "isogu", english: "to hurry", topics: ["verbs"] },
+      { kanji: "送る", kana: "おくる", romaji: "okuru", english: "to send", topics: ["verbs"] },
+      { kanji: "終わる", kana: "おわる", romaji: "owaru", english: "to end / to finish", topics: ["verbs"] },
+      { kanji: "切る", kana: "きる", romaji: "kiru", english: "to cut", topics: ["verbs"] },
+      { kanji: "消す", kana: "けす", romaji: "kesu", english: "to turn off / to erase", topics: ["verbs"] },
+      { kanji: "住む", kana: "すむ", romaji: "sumu", english: "to live / to reside", topics: ["verbs"] },
+      { kanji: "出す", kana: "だす", romaji: "dasu", english: "to take out", topics: ["verbs"] },
+      { kanji: "手伝う", kana: "てつだう", romaji: "tetsudau", english: "to help", topics: ["verbs"] },
+      { kanji: "飛ぶ", kana: "とぶ", romaji: "tobu", english: "to fly", topics: ["verbs"] },
+      { kanji: "取る", kana: "とる", romaji: "toru", english: "to take", topics: ["verbs"] },
+      { kanji: "乗る", kana: "のる", romaji: "noru", english: "to ride / to board", topics: ["verbs"] },
+      { kanji: "入る", kana: "はいる", romaji: "hairu", english: "to enter", topics: ["verbs"] },
+      { kanji: "履く", kana: "はく", romaji: "haku", english: "to wear (shoes)", topics: ["verbs"] },
+      { kanji: "働く", kana: "はたらく", romaji: "hataraku", english: "to work", topics: ["verbs"] },
+      { kanji: "引く", kana: "ひく", romaji: "hiku", english: "to pull", topics: ["verbs"] },
+      { kanji: "曲がる", kana: "まがる", romaji: "magaru", english: "to turn", topics: ["verbs"] },
+      { kanji: "休む", kana: "やすむ", romaji: "yasumu", english: "to rest", topics: ["verbs"] },
+      { kanji: "呼ぶ", kana: "よぶ", romaji: "yobu", english: "to call / to invite", topics: ["verbs"] },
+      { kanji: "食べる", kana: "たべる", romaji: "taberu", english: "to eat", topics: ["verbs"] },
+      { kanji: "見る", kana: "みる", romaji: "miru", english: "to see / to watch", topics: ["verbs"] },
+      { kanji: "起きる", kana: "おきる", romaji: "okiru", english: "to get up", topics: ["verbs"] },
+      { kanji: "寝る", kana: "ねる", romaji: "neru", english: "to sleep", topics: ["verbs"] },
+      { kanji: "開ける", kana: "あける", romaji: "akeru", english: "to open", topics: ["verbs"] },
+      { kanji: "閉める", kana: "しめる", romaji: "shimeru", english: "to close", topics: ["verbs"] },
+      { kanji: "教える", kana: "おしえる", romaji: "oshieru", english: "to teach", topics: ["verbs"] },
+      { kanji: "覚える", kana: "おぼえる", romaji: "oboeru", english: "to remember", topics: ["verbs"] },
+      { kanji: "忘れる", kana: "わすれる", romaji: "wasureru", english: "to forget", topics: ["verbs"] },
+      { kanji: "始める", kana: "はじめる", romaji: "hajimeru", english: "to begin", topics: ["verbs"] },
+      { kanji: "考える", kana: "かんがえる", romaji: "kangaeru", english: "to think", topics: ["verbs"] },
+      { kanji: "決める", kana: "きめる", romaji: "kimeru", english: "to decide", topics: ["verbs"] },
+      { kanji: "疲れる", kana: "つかれる", romaji: "tsukareru", english: "to get tired", topics: ["verbs"] },
+      { kanji: "借りる", kana: "かりる", romaji: "kariru", english: "to borrow", topics: ["verbs"] },
+      { kanji: "返す", kana: "かえす", romaji: "kaesu", english: "to return (a thing)", topics: ["verbs"] },
+      { kanji: "入れる", kana: "いれる", romaji: "ireru", english: "to put in", topics: ["verbs"] },
+      { kanji: "あげる", kana: "あげる", romaji: "ageru", english: "to give", topics: ["verbs"] },
+      { kanji: "もらう", kana: "もらう", romaji: "morau", english: "to receive", topics: ["verbs"] },
+      { kanji: "見せる", kana: "みせる", romaji: "miseru", english: "to show", topics: ["verbs"] },
+      { kanji: "習う", kana: "ならう", romaji: "narau", english: "to learn", topics: ["verbs"] },
+      { kanji: "着る", kana: "きる", romaji: "kiru", english: "to wear (upper body)", topics: ["verbs"] },
+      { kanji: "出る", kana: "でる", romaji: "deru", english: "to go out / to leave", topics: ["verbs"] },
+      { kanji: "降りる", kana: "おりる", romaji: "oriru", english: "to get off", topics: ["verbs"] },
+      { kanji: "浴びる", kana: "あびる", romaji: "abiru", english: "to take (a shower)", topics: ["verbs"] },
+      { kanji: "いる", kana: "いる", romaji: "iru", english: "to exist (animate)", topics: ["verbs"] },
+      { kanji: "ある", kana: "ある", romaji: "aru", english: "to exist (inanimate)", topics: ["verbs"] },
+      { kanji: "する", kana: "する", romaji: "suru", english: "to do", topics: ["verbs"] },
+      { kanji: "来る", kana: "くる", romaji: "kuru", english: "to come", topics: ["verbs"] },
+      { kanji: "行く", kana: "いく", romaji: "iku", english: "to go", topics: ["verbs"] },
+      { kanji: "勉強する", kana: "べんきょうする", romaji: "benkyou suru", english: "to study", topics: ["verbs", "school"] },
+      { kanji: "仕事する", kana: "しごとする", romaji: "shigoto suru", english: "to work", topics: ["verbs", "work"] },
+      { kanji: "旅行する", kana: "りょこうする", romaji: "ryokou suru", english: "to travel", topics: ["verbs"] },
+      { kanji: "掃除する", kana: "そうじする", romaji: "souji suru", english: "to clean", topics: ["verbs", "house"] },
+      { kanji: "洗濯する", kana: "せんたくする", romaji: "sentaku suru", english: "to do laundry", topics: ["verbs", "house"] },
+      { kanji: "料理する", kana: "りょうりする", romaji: "ryouri suru", english: "to cook", topics: ["verbs", "food"] },
+      { kanji: "電話する", kana: "でんわする", romaji: "denwa suru", english: "to call (phone)", topics: ["verbs", "tech"] },
+      { kanji: "練習する", kana: "れんしゅうする", romaji: "renshuu suru", english: "to practice", topics: ["verbs", "sports"] },
+      { kanji: "結婚する", kana: "けっこんする", romaji: "kekkon suru", english: "to marry", topics: ["verbs"] },
+      { kanji: "質問する", kana: "しつもんする", romaji: "shitsumon suru", english: "to ask a question", topics: ["verbs"] },
+      { kanji: "説明する", kana: "せつめいする", romaji: "setsumei suru", english: "to explain", topics: ["verbs"] },
+      { kanji: "紹介する", kana: "しょうかいする", romaji: "shoukai suru", english: "to introduce", topics: ["verbs"] },
+      { kanji: "生まれる", kana: "うまれる", romaji: "umareru", english: "to be born", topics: ["verbs"] },
+      { kanji: "死ぬ", kana: "しぬ", romaji: "shinu", english: "to die", topics: ["verbs"] },
+      { kanji: "引っ越す", kana: "ひっこす", romaji: "hikkosu", english: "to move house", topics: ["verbs"] },
+      { kanji: "建てる", kana: "たてる", romaji: "tateru", english: "to build", topics: ["verbs"] },
+      { kanji: "壊す", kana: "こわす", romaji: "kowasu", english: "to break", topics: ["verbs"] },
+      { kanji: "直す", kana: "なおす", romaji: "naosu", english: "to fix, repair", topics: ["verbs"] },
+      { kanji: "治る", kana: "なおる", romaji: "naoru", english: "to heal, recover", topics: ["verbs", "health"] },
+      { kanji: "散歩する", kana: "さんぽする", romaji: "sanpo suru", english: "to take a walk", topics: ["verbs"] },
+      { kanji: "買い物する", kana: "かいものする", romaji: "kaimono suru", english: "to shop", topics: ["verbs"] },
+      { kanji: "準備する", kana: "じゅんびする", romaji: "junbi suru", english: "to prepare", topics: ["verbs"] },
+      { kanji: "片付ける", kana: "かたづける", romaji: "katadzukeru", english: "to tidy up", topics: ["verbs", "house"] },
+      { kanji: "捨てる", kana: "すてる", romaji: "suteru", english: "to throw away", topics: ["verbs"] },
+      { kanji: "選ぶ", kana: "えらぶ", romaji: "erabu", english: "to choose", topics: ["verbs"] },
+      { kanji: "変える", kana: "かえる", romaji: "kaeru", english: "to change (something)", topics: ["verbs"] },
+      { kanji: "変わる", kana: "かわる", romaji: "kawaru", english: "to change (intransitive)", topics: ["verbs"] },
+      { kanji: "増える", kana: "ふえる", romaji: "fueru", english: "to increase", topics: ["verbs"] },
+      { kanji: "減る", kana: "へる", romaji: "heru", english: "to decrease", topics: ["verbs"] },
+      { kanji: "遅れる", kana: "おくれる", romaji: "okureru", english: "to be late", topics: ["verbs", "time"] },
+      { kanji: "間に合う", kana: "まにあう", romaji: "maniau", english: "to be in time", topics: ["verbs", "time"] },
+      { kanji: "迎える", kana: "むかえる", romaji: "mukaeru", english: "to pick up, welcome", topics: ["verbs"] },
+      { kanji: "届ける", kana: "とどける", romaji: "todokeru", english: "to deliver", topics: ["verbs"] },
+      { kanji: "貸す", kana: "かす", romaji: "kasu", english: "to lend", topics: ["verbs"] },
+      { kanji: "払う", kana: "はらう", romaji: "harau", english: "to pay", topics: ["verbs"] },
+      { kanji: "予約する", kana: "よやくする", romaji: "yoyaku suru", english: "to reserve", topics: ["verbs"] },
+      { kanji: "相談する", kana: "そうだんする", romaji: "soudan suru", english: "to consult", topics: ["verbs"] },
+      { kanji: "伝える", kana: "つたえる", romaji: "tsutaeru", english: "to convey", topics: ["verbs"] },
+      { kanji: "連絡する", kana: "れんらくする", romaji: "renraku suru", english: "to contact", topics: ["verbs"] },
+      { kanji: "運転する", kana: "うんてんする", romaji: "unten suru", english: "to drive", topics: ["verbs", "transport"] },
+      { kanji: "着く", kana: "つく", romaji: "tsuku", english: "to arrive", topics: ["verbs"] },
+      { kanji: "出発する", kana: "しゅっぱつする", romaji: "shuppatsu suru", english: "to depart", topics: ["verbs"] },
+      { kanji: "卒業する", kana: "そつぎょうする", romaji: "sotsugyou suru", english: "to graduate", topics: ["verbs", "school"] },
+      { kanji: "復習する", kana: "ふくしゅうする", romaji: "fukushuu suru", english: "to review", topics: ["verbs", "school"] },
+      { kanji: "予習する", kana: "よしゅうする", romaji: "yoshū suru", english: "to prepare for class", topics: ["verbs", "school"] },
+      { kanji: "謝る", kana: "あやまる", romaji: "ayamaru", english: "to apologize", topics: ["verbs"] },
+      { kanji: "約束する", kana: "やくそくする", romaji: "yakusoku suru", english: "to promise", topics: ["verbs"] },
+      { kanji: "信じる", kana: "しんじる", romaji: "shinjiru", english: "to believe", topics: ["verbs"] },
+      { kanji: "感じる", kana: "かんじる", romaji: "kanjiru", english: "to feel", topics: ["verbs"] },
+      { kanji: "思う", kana: "おもう", romaji: "omou", english: "to think", topics: ["verbs"] },
+      { kanji: "誘う", kana: "さそう", romaji: "sasou", english: "to invite", topics: ["verbs"] },
+      { kanji: "訪ねる", kana: "たずねる", romaji: "tazuneru", english: "to visit", topics: ["verbs"] },
+      { kanji: "泊まる", kana: "とまる", romaji: "tomaru", english: "to stay overnight", topics: ["verbs"] },
+      { kanji: "確認する", kana: "かくにんする", romaji: "kakunin suru", english: "to confirm", topics: ["verbs"] },
+      // MISSING N5 VERBS
+      { kanji: "開く", kana: "あく", romaji: "aku", english: "to open (intransitive)", topics: ["verbs"] },
+      { kanji: "要る", kana: "いる", romaji: "iru", english: "to need", topics: ["verbs"] },
+      { kanji: "置く", kana: "おく", romaji: "oku", english: "to put / to place", topics: ["verbs"] },
+      { kanji: "押す", kana: "おす", romaji: "osu", english: "to push", topics: ["verbs"] },
+      { kanji: "かかる", kana: "かかる", romaji: "kakaru", english: "to take (time/money)", topics: ["verbs"] },
+      { kanji: "掛ける", kana: "かける", romaji: "kakeru", english: "to hang / to call", topics: ["verbs"] },
+      { kanji: "曇る", kana: "くもる", romaji: "kumoru", english: "to become cloudy", topics: ["verbs", "weather"] },
+      { kanji: "咲く", kana: "さく", romaji: "saku", english: "to bloom", topics: ["verbs"] },
+      { kanji: "差す", kana: "さす", romaji: "sasu", english: "to hold up (umbrella)", topics: ["verbs"] },
+      { kanji: "吸う", kana: "すう", romaji: "suu", english: "to smoke / to breathe in", topics: ["verbs"] },
+      { kanji: "頼む", kana: "たのむ", romaji: "tanomu", english: "to request / to ask", topics: ["verbs"] },
+      { kanji: "違う", kana: "ちがう", romaji: "chigau", english: "to differ / to be wrong", topics: ["verbs"] },
+      { kanji: "点ける", kana: "つける", romaji: "tsukeru", english: "to turn on", topics: ["verbs"] },
+      { kanji: "勤める", kana: "つとめる", romaji: "tsutomeru", english: "to work for", topics: ["verbs", "work"] },
+      { kanji: "出かける", kana: "でかける", romaji: "dekakeru", english: "to go out", topics: ["verbs"] },
+      { kanji: "できる", kana: "できる", romaji: "dekiru", english: "to be able to", topics: ["verbs"] },
+      { kanji: "止まる", kana: "とまる", romaji: "tomaru", english: "to stop", topics: ["verbs"] },
+      { kanji: "撮る", kana: "とる", romaji: "toru", english: "to take (a photo)", topics: ["verbs"] },
+      { kanji: "並ぶ", kana: "ならぶ", romaji: "narabu", english: "to line up", topics: ["verbs"] },
+      { kanji: "並べる", kana: "ならべる", romaji: "naraberu", english: "to line up (something)", topics: ["verbs"] },
+      { kanji: "成る", kana: "なる", romaji: "naru", english: "to become", topics: ["verbs"] },
+      { kanji: "脱ぐ", kana: "ぬぐ", romaji: "nugu", english: "to take off (clothes)", topics: ["verbs"] },
+      { kanji: "登る", kana: "のぼる", romaji: "noboru", english: "to climb", topics: ["verbs"] },
+      { kanji: "始まる", kana: "はじまる", romaji: "hajimaru", english: "to begin (intransitive)", topics: ["verbs"] },
+      { kanji: "貼る", kana: "はる", romaji: "haru", english: "to paste / to stick", topics: ["verbs"] },
+      { kanji: "弾く", kana: "ひく", romaji: "hiku", english: "to play (instrument)", topics: ["verbs"] },
+      { kanji: "吹く", kana: "ふく", romaji: "fuku", english: "to blow", topics: ["verbs"] },
+      { kanji: "磨く", kana: "みがく", romaji: "migaku", english: "to polish / to brush", topics: ["verbs"] },
+      { kanji: "渡す", kana: "わたす", romaji: "watasu", english: "to hand over", topics: ["verbs"] },
+      { kanji: "渡る", kana: "わたる", romaji: "wataru", english: "to cross", topics: ["verbs"] },
+      { kanji: "割る", kana: "わる", romaji: "waru", english: "to break / to divide", topics: ["verbs"] },
 
-            numbers: [
-                { romaji: "ichi", english: "one" },
-                { romaji: "ni", english: "two" },
-                { romaji: "san", english: "three" },
-                { romaji: "yon / shi", english: "four" },
-                { romaji: "go", english: "five" },
-                { romaji: "roku", english: "six" },
-                { romaji: "nana / shichi", english: "seven" },
-                { romaji: "hachi", english: "eight" },
-                { romaji: "kyuu / ku", english: "nine" },
-                { romaji: "juu", english: "ten" },
-                { romaji: "hyaku", english: "hundred" },
-                { romaji: "sen", english: "thousand" },
-                { romaji: "man", english: "ten thousand" },
-            ],
+      // ── i-ADJECTIVES ──
+      { kanji: "危ない", kana: "あぶない", romaji: "abunai", english: "dangerous", topics: ["i_adj"] },
+      { kanji: "明るい", kana: "あかるい", romaji: "akarui", english: "bright / cheerful", topics: ["i_adj"] },
+      { kanji: "赤い", kana: "あかい", romaji: "akai", english: "red", topics: ["i_adj", "colors"] },
+      { kanji: "甘い", kana: "あまい", romaji: "amai", english: "sweet", topics: ["i_adj"] },
+      { kanji: "青い", kana: "あおい", romaji: "aoi", english: "blue", topics: ["i_adj", "colors"] },
+      { kanji: "新しい", kana: "あたらしい", romaji: "atarashii", english: "new", topics: ["i_adj"] },
+      { kanji: "暖かい", kana: "あたたかい", romaji: "atatakai", english: "warm", topics: ["i_adj"] },
+      { kanji: "暑い", kana: "あつい", romaji: "atsui", english: "hot (weather)", topics: ["i_adj", "weather"] },
+      { kanji: "熱い", kana: "あつい", romaji: "atsui", english: "hot (to touch)", topics: ["i_adj"] },
+      { kanji: "小さい", kana: "ちいさい", romaji: "chiisai", english: "small", topics: ["i_adj"] },
+      { kanji: "近い", kana: "ちかい", romaji: "chikai", english: "near / close", topics: ["i_adj"] },
+      { kanji: "古い", kana: "ふるい", romaji: "furui", english: "old (things)", topics: ["i_adj"] },
+      { kanji: "速い", kana: "はやい", romaji: "hayai", english: "fast / early", topics: ["i_adj"] },
+      { kanji: "低い", kana: "ひくい", romaji: "hikui", english: "low / short", topics: ["i_adj"] },
+      { kanji: "広い", kana: "ひろい", romaji: "hiroi", english: "wide / spacious", topics: ["i_adj"] },
+      { kanji: "いい", kana: "いい", romaji: "ii", english: "good", topics: ["i_adj"] },
+      { kanji: "忙しい", kana: "いそがしい", romaji: "isogashii", english: "busy", topics: ["i_adj"] },
+      { kanji: "可愛い", kana: "かわいい", romaji: "kawaii", english: "cute", topics: ["i_adj"] },
+      { kanji: "汚い", kana: "きたない", romaji: "kitanai", english: "dirty", topics: ["i_adj"] },
+      { kanji: "暗い", kana: "くらい", romaji: "kurai", english: "dark", topics: ["i_adj"] },
+      { kanji: "黒い", kana: "くろい", romaji: "kuroi", english: "black", topics: ["i_adj", "colors"] },
+      { kanji: "難しい", kana: "むずかしい", romaji: "muzukashii", english: "difficult", topics: ["i_adj"] },
+      { kanji: "長い", kana: "ながい", romaji: "nagai", english: "long", topics: ["i_adj"] },
+      { kanji: "苦い", kana: "にがい", romaji: "nigai", english: "bitter", topics: ["i_adj"] },
+      { kanji: "美味しい", kana: "おいしい", romaji: "oishii", english: "delicious", topics: ["i_adj", "food"] },
+      { kanji: "大きい", kana: "おおきい", romaji: "ookii", english: "big", topics: ["i_adj"] },
+      { kanji: "面白い", kana: "おもしろい", romaji: "omoshiroi", english: "interesting", topics: ["i_adj"] },
+      { kanji: "重い", kana: "おもい", romaji: "omoi", english: "heavy", topics: ["i_adj"] },
+      { kanji: "遅い", kana: "おそい", romaji: "osoi", english: "slow / late", topics: ["i_adj"] },
+      { kanji: "寒い", kana: "さむい", romaji: "samui", english: "cold (weather)", topics: ["i_adj", "weather"] },
+      { kanji: "白い", kana: "しろい", romaji: "shiroi", english: "white", topics: ["i_adj", "colors"] },
+      { kanji: "少ない", kana: "すくない", romaji: "sukunai", english: "few / scarce", topics: ["i_adj"] },
+      { kanji: "涼しい", kana: "すずしい", romaji: "suzushii", english: "cool / refreshing", topics: ["i_adj", "weather"] },
+      { kanji: "高い", kana: "たかい", romaji: "takai", english: "high / expensive", topics: ["i_adj"] },
+      { kanji: "楽しい", kana: "たのしい", romaji: "tanoshii", english: "fun / enjoyable", topics: ["i_adj"] },
+      { kanji: "遠い", kana: "とおい", romaji: "tooi", english: "far", topics: ["i_adj", "directions"] },
+      { kanji: "強い", kana: "つよい", romaji: "tsuyoi", english: "strong", topics: ["i_adj"] },
+      { kanji: "悪い", kana: "わるい", romaji: "warui", english: "bad", topics: ["i_adj"] },
+      { kanji: "優しい", kana: "やさしい", romaji: "yasashii", english: "kind", topics: ["i_adj"] },
+      { kanji: "安い", kana: "やすい", romaji: "yasui", english: "cheap", topics: ["i_adj"] },
+      { kanji: "弱い", kana: "よわい", romaji: "yowai", english: "weak", topics: ["i_adj"] },
+      { kanji: "若い", kana: "わかい", romaji: "wakai", english: "young", topics: ["i_adj"] },
+      { kanji: "太い", kana: "ふとい", romaji: "futoi", english: "thick", topics: ["i_adj"] },
+      { kanji: "細い", kana: "ほそい", romaji: "hosoi", english: "thin", topics: ["i_adj"] },
+      { kanji: "欲しい", kana: "ほしい", romaji: "hoshii", english: "wanted / desired", topics: ["i_adj"] },
+      { kanji: "つまらない", kana: "つまらない", romaji: "tsumaranai", english: "boring", topics: ["i_adj"] },
+      { kanji: "薄い", kana: "うすい", romaji: "usui", english: "thin, weak", topics: ["i_adj"] },
+      { kanji: "おかしい", kana: "おかしい", romaji: "okashii", english: "strange", topics: ["i_adj"] },
+      { kanji: "悲しい", kana: "かなしい", romaji: "kanashii", english: "sad", topics: ["i_adj"] },
+      { kanji: "怖い", kana: "こわい", romaji: "kowai", english: "scary", topics: ["i_adj"] },
+      { kanji: "寂しい", kana: "さびしい", romaji: "sabishii", english: "lonely", topics: ["i_adj"] },
+      { kanji: "すごい", kana: "すごい", romaji: "sugoi", english: "amazing", topics: ["i_adj"] },
+      { kanji: "狭い", kana: "せまい", romaji: "semai", english: "narrow", topics: ["i_adj"] },
+      { kanji: "冷たい", kana: "つめたい", romaji: "tsumetai", english: "cold (to touch)", topics: ["i_adj"] },
+      { kanji: "眠い", kana: "ねむい", romaji: "nemui", english: "sleepy", topics: ["i_adj"] },
+      { kanji: "深い", kana: "ふかい", romaji: "fukai", english: "deep", topics: ["i_adj"] },
+      { kanji: "まずい", kana: "まずい", romaji: "mazui", english: "bad tasting", topics: ["i_adj", "food"] },
+      { kanji: "丸い", kana: "まるい", romaji: "marui", english: "round", topics: ["i_adj"] },
+      { kanji: "短い", kana: "みじかい", romaji: "mijikai", english: "short", topics: ["i_adj"] },
+      { kanji: "珍しい", kana: "めずらしい", romaji: "mezurashii", english: "rare", topics: ["i_adj"] },
+      { kanji: "嬉しい", kana: "うれしい", romaji: "ureshii", english: "happy", topics: ["i_adj"] },
+      { kanji: "軽い", kana: "かるい", romaji: "karui", english: "light (weight)", topics: ["i_adj"] },
+      { kanji: "浅い", kana: "あさい", romaji: "asai", english: "shallow", topics: ["i_adj"] },
+      { kanji: "美しい", kana: "うつくしい", romaji: "utsukushii", english: "beautiful", topics: ["i_adj"] },
+      { kanji: "痛い", kana: "いたい", romaji: "itai", english: "painful", topics: ["i_adj", "health"] },
+      { kanji: "厚い", kana: "あつい", romaji: "atsui", english: "thick", topics: ["i_adj"] },
+      { kanji: "うるさい", kana: "うるさい", romaji: "urusai", english: "noisy", topics: ["i_adj"] },
 
-            time: [
-                { romaji: "jikan", english: "time" },
-                { romaji: "toki", english: "time / moment" },
-                { romaji: "asa", english: "morning" },
-                { romaji: "hiru", english: "noon / daytime" },
-                { romaji: "yoru", english: "night" },
-                { romaji: "ban", english: "evening" },
-                { romaji: "kinou", english: "yesterday" },
-                { romaji: "kyou", english: "today" },
-                { romaji: "ashita", english: "tomorrow" },
-                { romaji: "kesa", english: "this morning" },
-                { romaji: "konban", english: "this evening" },
-                { romaji: "shuumatsu", english: "weekend" },
-                { romaji: "getsuyoubi", english: "Monday" },
-                { romaji: "kayoubi", english: "Tuesday" },
-                { romaji: "suiyoubi", english: "Wednesday" },
-                { romaji: "mokuyoubi", english: "Thursday" },
-                { romaji: "kinyoubi", english: "Friday" },
-                { romaji: "doyoubi", english: "Saturday" },
-                { romaji: "nichiyoubi", english: "Sunday" },
-                { romaji: "nen", english: "year" },
-                { romaji: "tsuki", english: "month" },
-                { romaji: "shuu", english: "week" },
-            ],
+      // ── na-ADJECTIVES ──
+      { kanji: "安全", kana: "あんぜん", romaji: "anzen", english: "safe", topics: ["na_adj"] },
+      { kanji: "便利", kana: "べんり", romaji: "benri", english: "convenient", topics: ["na_adj"] },
+      { kanji: "大丈夫", kana: "だいじょうぶ", romaji: "daijoubu", english: "OK / alright", topics: ["na_adj"] },
+      { kanji: "大事", kana: "だいじ", romaji: "daiji", english: "important", topics: ["na_adj"] },
+      { kanji: "駄目", kana: "だめ", romaji: "dame", english: "no good / not allowed", topics: ["na_adj"] },
+      { kanji: "元気", kana: "げんき", romaji: "genki", english: "healthy / energetic", topics: ["na_adj"] },
+      { kanji: "暇", kana: "ひま", romaji: "hima", english: "free (time)", topics: ["na_adj"] },
+      { kanji: "変", kana: "へん", romaji: "hen", english: "strange / weird", topics: ["na_adj"] },
+      { kanji: "上手", kana: "じょうず", romaji: "jouzu", english: "skilled / good at", topics: ["na_adj"] },
+      { kanji: "下手", kana: "へた", romaji: "heta", english: "unskilled / poor at", topics: ["na_adj"] },
+      { kanji: "簡単", kana: "かんたん", romaji: "kantan", english: "easy / simple", topics: ["na_adj"] },
+      { kanji: "綺麗", kana: "きれい", romaji: "kirei", english: "beautiful / clean", topics: ["na_adj"] },
+      { kanji: "真面目", kana: "まじめ", romaji: "majime", english: "serious / earnest", topics: ["na_adj"] },
+      { kanji: "賑やか", kana: "にぎやか", romaji: "nigiyaka", english: "lively / bustling", topics: ["na_adj"] },
+      { kanji: "静か", kana: "しずか", romaji: "shizuka", english: "quiet", topics: ["na_adj"] },
+      { kanji: "親切", kana: "しんせつ", romaji: "shinsetsu", english: "kind", topics: ["na_adj"] },
+      { kanji: "好き", kana: "すき", romaji: "suki", english: "liked / loved", topics: ["na_adj"] },
+      { kanji: "嫌い", kana: "きらい", romaji: "kirai", english: "disliked / hated", topics: ["na_adj"] },
+      { kanji: "大切", kana: "たいせつ", romaji: "taisetsu", english: "important / precious", topics: ["na_adj"] },
+      { kanji: "大変", kana: "たいへん", romaji: "taihen", english: "tough / serious", topics: ["na_adj"] },
+      { kanji: "有名", kana: "ゆうめい", romaji: "yuumei", english: "famous", topics: ["na_adj"] },
+      { kanji: "立派", kana: "りっぱ", romaji: "rippa", english: "splendid / fine", topics: ["na_adj"] },
+      { kanji: "素敵", kana: "すてき", romaji: "suteki", english: "lovely", topics: ["na_adj"] },
+      { kanji: "不便", kana: "ふべん", romaji: "fuben", english: "inconvenient", topics: ["na_adj"] },
 
-            weather: [
-                { romaji: "tenki", english: "weather" },
-                { romaji: "hare", english: "clear / sunny" },
-                { romaji: "ame", english: "rain" },
-                { romaji: "yuki", english: "snow" },
-                { romaji: "kaze", english: "wind" },
-                { romaji: "kumo", english: "cloud" },
-                { romaji: "arashi", english: "storm" },
-                { romaji: "taifuu", english: "typhoon" },
-                { romaji: "kaminari", english: "thunder" },
-                { romaji: "niji", english: "rainbow" },
-                { romaji: "kiru", english: "fog / mist" },
-                { romaji: "samusa", english: "coldness" },
-                { romaji: "atsusa", english: "heat" },
-                { romaji: "mushiatsui", english: "humid / muggy" },
-            ],
+      // ── ADVERBS ──
+      { kana: "あまり", romaji: "amari", english: "not very (with negative)", topics: ["adverbs"] },
+      { kana: "ちょっと", romaji: "chotto", english: "a little", topics: ["adverbs"] },
+      { kanji: "丁度", kana: "ちょうど", romaji: "choudo", english: "exactly", topics: ["adverbs"] },
+      { kana: "だけ", romaji: "dake", english: "only / just", topics: ["adverbs"] },
+      { kana: "だんだん", romaji: "dandan", english: "gradually", topics: ["adverbs"] },
+      { kana: "どうも", romaji: "doumo", english: "thanks / somehow", topics: ["adverbs"] },
+      { kanji: "一番", kana: "いちばん", romaji: "ichiban", english: "number one / best", topics: ["adverbs"] },
+      { kanji: "一度", kana: "いちど", romaji: "ichido", english: "once", topics: ["adverbs"] },
+      { kana: "いくら", romaji: "ikura", english: "how much", topics: ["adverbs", "questions"] },
+      { kanji: "色々", kana: "いろいろ", romaji: "iroiro", english: "various", topics: ["adverbs"] },
+      { kanji: "一緒に", kana: "いっしょに", romaji: "issho ni", english: "together", topics: ["adverbs"] },
+      { kana: "いつも", romaji: "itsumo", english: "always / usually", topics: ["adverbs"] },
+      { kana: "まだ", romaji: "mada", english: "still / not yet", topics: ["adverbs"] },
+      { kana: "もう", romaji: "mou", english: "already / anymore", topics: ["adverbs"] },
+      { kana: "もっと", romaji: "motto", english: "more", topics: ["adverbs"] },
+      { kanji: "中々", kana: "なかなか", romaji: "nakanaka", english: "considerably / not easily", topics: ["adverbs"] },
+      { kanji: "直ぐに", kana: "すぐに", romaji: "sugu ni", english: "immediately", topics: ["adverbs"] },
+      { kanji: "少し", kana: "すこし", romaji: "sukoshi", english: "a little", topics: ["adverbs"] },
+      { kanji: "多分", kana: "たぶん", romaji: "tabun", english: "probably", topics: ["adverbs"] },
+      { kanji: "時々", kana: "ときどき", romaji: "tokidoki", english: "sometimes", topics: ["adverbs"] },
+      { kana: "とても", romaji: "totemo", english: "very", topics: ["adverbs"] },
+      { kana: "よく", romaji: "yoku", english: "often / well", topics: ["adverbs"] },
+      { kana: "ゆっくり", romaji: "yukkuri", english: "slowly / leisurely", topics: ["adverbs"] },
+      { kanji: "是非", kana: "ぜひ", romaji: "zehi", english: "by all means", topics: ["adverbs"] },
+      { kanji: "全然", kana: "ぜんぜん", romaji: "zenzen", english: "not at all (with negative)", topics: ["adverbs"] },
+      { kana: "あとで", romaji: "ato de", english: "later", topics: ["adverbs"] },
+      { kana: "きっと", romaji: "kitto", english: "surely", topics: ["adverbs"] },
+      { kana: "けっこう", romaji: "kekkou", english: "quite", topics: ["adverbs"] },
+      { kana: "なるべく", romaji: "narubeku", english: "as much as possible", topics: ["adverbs"] },
+      { kana: "やはり", romaji: "yahari", english: "as expected", topics: ["adverbs"] },
+      { kana: "わざわざ", romaji: "wazawaza", english: "expressly", topics: ["adverbs"] },
+      { kana: "たいてい", romaji: "taitei", english: "usually", topics: ["adverbs"] },
+      { kana: "たまに", romaji: "tamani", english: "occasionally", topics: ["adverbs"] },
+      { kana: "めったに", romaji: "mettani", english: "rarely (with negative)", topics: ["adverbs"] },
+      { kanji: "決して", kana: "けっして", romaji: "kesshite", english: "never (with negative)", topics: ["adverbs"] },
+      { kana: "すごく", romaji: "sugoku", english: "very", topics: ["adverbs"] },
+      { kana: "かなり", romaji: "kanari", english: "fairly", topics: ["adverbs"] },
+      { kanji: "実は", kana: "じつは", romaji: "jitsu wa", english: "actually", topics: ["adverbs"] },
+      { kanji: "確かに", kana: "たしかに", romaji: "tashika ni", english: "certainly", topics: ["adverbs"] },
+      { kana: "やっぱり", romaji: "yappari", english: "as expected", topics: ["adverbs"] },
+      { kanji: "必ず", kana: "かならず", romaji: "kanarazu", english: "certainly", topics: ["adverbs"] },
+      { kanji: "絶対に", kana: "ぜったいに", romaji: "zettai ni", english: "absolutely", topics: ["adverbs"] },
+      { kanji: "普段", kana: "ふだん", romaji: "fudan", english: "usually", topics: ["adverbs"] },
+      { kana: "だいたい", romaji: "daitai", english: "mostly", topics: ["adverbs"] },
+      { kana: "ほとんど", romaji: "hotondo", english: "mostly, almost", topics: ["adverbs"] },
+      { kanji: "約", kana: "やく", romaji: "yaku", english: "about, approximately", topics: ["adverbs"] },
 
-            places: [
-                { romaji: "gakkou", english: "school" },
-                { romaji: "kaisha", english: "company" },
-                { romaji: "byouin", english: "hospital" },
-                { romaji: "yakkyoku", english: "pharmacy" },
-                { romaji: "toshokan", english: "library" },
-                { romaji: "yuubinkyoku", english: "post office" },
-                { romaji: "keisatsusho", english: "police station" },
-                { romaji: "eki", english: "station" },
-                { romaji: "kuukou", english: "airport" },
-                { romaji: "kounan", english: "harbor / port" },
-                { romaji: "depaato", english: "department store" },
-                { romaji: "kissa", english: "café" },
-                { romaji: "resutoran", english: "restaurant" },
-                { romaji: "hoteru", english: "hotel" },
-                { romaji: "jiin", english: "temple" },
-                { romaji: "jinja", english: "shrine" },
-                { romaji: "kouen", english: "park" },
-                { romaji: "suupaa", english: "supermarket" },
-                { romaji: "konbini", english: "convenience store" },
-            ],
+      // ── FOOD & DRINK ──
+      { kanji: "ご飯", kana: "ごはん", romaji: "gohan", english: "cooked rice / meal", topics: ["food"] },
+      { kanji: "パン", kana: "パン", romaji: "pan", english: "bread", topics: ["food"] },
+      { kanji: "肉", kana: "にく", romaji: "niku", english: "meat", topics: ["food"] },
+      { kanji: "魚", kana: "さかな", romaji: "sakana", english: "fish", topics: ["food", "animals"] },
+      { kanji: "卵", kana: "たまご", romaji: "tamago", english: "egg", topics: ["food"] },
+      { kanji: "牛乳", kana: "ぎゅうにゅう", romaji: "gyuunyuu", english: "milk", topics: ["food"] },
+      { kanji: "水", kana: "みず", romaji: "mizu", english: "water", topics: ["food"] },
+      { kanji: "お茶", kana: "おちゃ", romaji: "ocha", english: "tea", topics: ["food"] },
+      { kanji: "コーヒー", kana: "コーヒー", romaji: "koohii", english: "coffee", topics: ["food"] },
+      { kanji: "ビール", kana: "ビール", romaji: "biiru", english: "beer", topics: ["food"] },
+      { kanji: "ワイン", kana: "ワイン", romaji: "wain", english: "wine", topics: ["food"] },
+      { kanji: "果物", kana: "くだもの", romaji: "kudamono", english: "fruit", topics: ["food"] },
+      { kanji: "野菜", kana: "やさい", romaji: "yasai", english: "vegetable", topics: ["food"] },
+      { kanji: "砂糖", kana: "さとう", romaji: "satou", english: "sugar", topics: ["food"] },
+      { kanji: "塩", kana: "しお", romaji: "shio", english: "salt", topics: ["food"] },
+      { kanji: "米", kana: "こめ", romaji: "kome", english: "rice (uncooked)", topics: ["food"] },
+      { kanji: "麺", kana: "めん", romaji: "men", english: "noodles", topics: ["food"] },
+      { kanji: "スープ", kana: "スープ", romaji: "suupu", english: "soup", topics: ["food"] },
+      { kanji: "サラダ", kana: "サラダ", romaji: "sarada", english: "salad", topics: ["food"] },
+      { kanji: "アイスクリーム", kana: "アイスクリーム", romaji: "aisukuriimu", english: "ice cream", topics: ["food"] },
+      { kanji: "ケーキ", kana: "ケーキ", romaji: "keeki", english: "cake", topics: ["food"] },
+      { kanji: "チョコレート", kana: "チョコレート", romaji: "chokoreeto", english: "chocolate", topics: ["food"] },
+      { kanji: "ハンバーガー", kana: "ハンバーガー", romaji: "hanbaagaa", english: "hamburger", topics: ["food"] },
+      { kanji: "ピザ", kana: "ピザ", romaji: "piza", english: "pizza", topics: ["food"] },
+      { kanji: "寿司", kana: "すし", romaji: "sushi", english: "sushi", topics: ["food"] },
+      { kanji: "ラーメン", kana: "ラーメン", romaji: "raamen", english: "ramen", topics: ["food"] },
+      { kanji: "牛肉", kana: "ぎゅうにく", romaji: "gyuuniku", english: "beef", topics: ["food"] },
+      { kanji: "豚肉", kana: "ぶたにく", romaji: "butaniku", english: "pork", topics: ["food"] },
+      { kanji: "鶏肉", kana: "とりにく", romaji: "toriniku", english: "chicken", topics: ["food"] },
+      { kanji: "りんご", kana: "りんご", romaji: "ringo", english: "apple", topics: ["food"] },
+      { kanji: "バナナ", kana: "バナナ", romaji: "banana", english: "banana", topics: ["food"] },
+      { kanji: "オレンジ", kana: "オレンジ", romaji: "orenji", english: "orange", topics: ["food", "colors"] },
+      { kanji: "苺", kana: "いちご", romaji: "ichigo", english: "strawberry", topics: ["food"] },
+      { kanji: "葡萄", kana: "ぶどう", romaji: "budou", english: "grape", topics: ["food"] },
+      { kanji: "西瓜", kana: "すいか", romaji: "suika", english: "watermelon", topics: ["food"] },
+      { kanji: "桃", kana: "もも", romaji: "momo", english: "peach", topics: ["food"] },
+      { kanji: "お菓子", kana: "おかし", romaji: "okashi", english: "sweets / snacks", topics: ["food"] },
+      { kanji: "弁当", kana: "べんとう", romaji: "bentou", english: "bento / lunch box", topics: ["food"] },
+      { kanji: "朝ご飯", kana: "あさごはん", romaji: "asagohan", english: "breakfast", topics: ["food"] },
+      { kanji: "昼ご飯", kana: "ひるごはん", romaji: "hirugohan", english: "lunch", topics: ["food"] },
+      { kanji: "晩ご飯", kana: "ばんごはん", romaji: "bangohan", english: "dinner", topics: ["food"] },
+      { kanji: "食べ物", kana: "たべもの", romaji: "tabemono", english: "food", topics: ["food"] },
+      { kanji: "飲み物", kana: "のみもの", romaji: "nomimono", english: "drink", topics: ["food"] },
+      { kanji: "お酒", kana: "おさけ", romaji: "osake", english: "alcohol", topics: ["food"] },
+      { kanji: "ジュース", kana: "ジュース", romaji: "juusu", english: "juice", topics: ["food"] },
+      { kanji: "紅茶", kana: "こうちゃ", romaji: "koucha", english: "black tea", topics: ["food"] },
+      { kanji: "天ぷら", kana: "てんぷら", romaji: "tenpura", english: "tempura", topics: ["food"] },
+      { kanji: "味噌汁", kana: "みそしる", romaji: "misoshiru", english: "miso soup", topics: ["food"] },
+      { kanji: "おにぎり", kana: "おにぎり", romaji: "onigiri", english: "rice ball", topics: ["food"] },
+      { kanji: "サンドイッチ", kana: "サンドイッチ", romaji: "sandoicchi", english: "sandwich", topics: ["food"] },
+      { kanji: "デザート", kana: "デザート", romaji: "dezaato", english: "dessert", topics: ["food"] },
+      { kanji: "おやつ", kana: "おやつ", romaji: "oyatsu", english: "snack", topics: ["food"] },
 
-            clothing: [
-                { romaji: "fuku", english: "clothes" },
-                { romaji: "kutsu", english: "shoes" },
-                { romaji: "kutsushita", english: "socks" },
-                { romaji: "zubon", english: "pants" },
-                { romaji: "shatsu", english: "shirt" },
-                { romaji: "waishatsu", english: "dress shirt" },
-                { romaji: "sukāto", english: "skirt" },
-                { romaji: "doresu", english: "dress" },
-                { romaji: "jāketto", english: "jacket" },
-                { romaji: "kōto", english: "coat" },
-                { romaji: "sebiro", english: "suit" },
-                { romaji: "nekutai", english: "tie" },
-                { romaji: "bōshi", english: "hat" },
-                { romaji: "megane", english: "glasses" },
-                { romaji: "tebukuro", english: "gloves" },
-                { romaji: "mufurā", english: "scarf" },
-                { romaji: "obī", english: "belt" },
-                { romaji: "jitensha", english: "bicycle" },
-                { romaji: "kaban", english: "bag" },
-                { romaji: "saifu", english: "wallet" },
-            ],
+      // ── ANIMALS ──
+      { kanji: "犬", kana: "いぬ", romaji: "inu", english: "dog", topics: ["animals"] },
+      { kanji: "猫", kana: "ねこ", romaji: "neko", english: "cat", topics: ["animals"] },
+      { kanji: "鳥", kana: "とり", romaji: "tori", english: "bird", topics: ["animals"] },
+      { kanji: "馬", kana: "うま", romaji: "uma", english: "horse", topics: ["animals"] },
+      { kanji: "牛", kana: "うし", romaji: "ushi", english: "cow", topics: ["animals"] },
+      { kanji: "豚", kana: "ぶた", romaji: "buta", english: "pig", topics: ["animals"] },
+      { kanji: "羊", kana: "ひつじ", romaji: "hitsuji", english: "sheep", topics: ["animals"] },
+      { kanji: "猿", kana: "さる", romaji: "saru", english: "monkey", topics: ["animals"] },
+      { kanji: "熊", kana: "くま", romaji: "kuma", english: "bear", topics: ["animals"] },
+      { kanji: "狼", kana: "おおかみ", romaji: "ookami", english: "wolf", topics: ["animals"] },
+      { kanji: "狐", kana: "きつね", romaji: "kitsune", english: "fox", topics: ["animals"] },
+      { kanji: "兎", kana: "うさぎ", romaji: "usagi", english: "rabbit", topics: ["animals"] },
+      { kanji: "鼠", kana: "ねずみ", romaji: "nezumi", english: "mouse / rat", topics: ["animals"] },
+      { kanji: "虎", kana: "とら", romaji: "tora", english: "tiger", topics: ["animals"] },
+      { kanji: "象", kana: "ぞう", romaji: "zou", english: "elephant", topics: ["animals"] },
+      { kanji: "虫", kana: "むし", romaji: "mushi", english: "insect", topics: ["animals"] },
+      { kanji: "蛇", kana: "へび", romaji: "hebi", english: "snake", topics: ["animals"] },
+      { kanji: "亀", kana: "かめ", romaji: "kame", english: "turtle", topics: ["animals"] },
+      { kanji: "金魚", kana: "きんぎょ", romaji: "kingyo", english: "goldfish", topics: ["animals"] },
+      { kanji: "動物", kana: "どうぶつ", romaji: "doubutsu", english: "animal", topics: ["animals"] },
+      { kanji: "ペット", kana: "ペット", romaji: "petto", english: "pet", topics: ["animals"] },
+      { kanji: "子犬", kana: "こいぬ", romaji: "koinu", english: "puppy", topics: ["animals"] },
+      { kanji: "子猫", kana: "こねこ", romaji: "koneko", english: "kitten", topics: ["animals"] },
 
-            transport: [
-                { romaji: "kuruma", english: "car" },
-                { romaji: "densha", english: "train" },
-                { romaji: "basu", english: "bus" },
-                { romaji: "hikouki", english: "airplane" },
-                { romaji: "fune", english: "ship / boat" },
-                { romaji: "jitensha", english: "bicycle" },
-                { romaji: "baiku", english: "motorbike" },
-                { romaji: "takushii", english: "taxi" },
-                { romaji: "chikatetsu", english: "subway" },
-                { romaji: "shinkansen", english: "bullet train" },
-                { romaji: "ferī", english: "ferry" },
-                { romaji: "torakku", english: "truck" },
-                { romaji: "resukyū", english: "rescue vehicle" },
-            ],
+      // ── BODY PARTS ──
+      { kanji: "頭", kana: "あたま", romaji: "atama", english: "head", topics: ["body"] },
+      { kanji: "髪", kana: "かみ", romaji: "kami", english: "hair", topics: ["body"] },
+      { kanji: "顔", kana: "かお", romaji: "kao", english: "face", topics: ["body"] },
+      { kanji: "目", kana: "め", romaji: "me", english: "eye", topics: ["body"] },
+      { kanji: "耳", kana: "みみ", romaji: "mimi", english: "ear", topics: ["body"] },
+      { kanji: "鼻", kana: "はな", romaji: "hana", english: "nose", topics: ["body"] },
+      { kanji: "口", kana: "くち", romaji: "kuchi", english: "mouth", topics: ["body"] },
+      { kanji: "歯", kana: "は", romaji: "ha", english: "tooth", topics: ["body"] },
+      { kanji: "手", kana: "て", romaji: "te", english: "hand", topics: ["body"] },
+      { kanji: "足", kana: "あし", romaji: "ashi", english: "foot / leg", topics: ["body"] },
+      { kanji: "胸", kana: "むね", romaji: "mune", english: "chest", topics: ["body"] },
+      { kanji: "背中", kana: "せなか", romaji: "senaka", english: "back", topics: ["body"] },
+      { kanji: "お腹", kana: "おなか", romaji: "onaka", english: "stomach", topics: ["body"] },
+      { kanji: "腰", kana: "こし", romaji: "koshi", english: "hip / waist", topics: ["body"] },
+      { kanji: "膝", kana: "ひざ", romaji: "hiza", english: "knee", topics: ["body"] },
+      { kanji: "肩", kana: "かた", romaji: "kata", english: "shoulder", topics: ["body"] },
+      { kanji: "首", kana: "くび", romaji: "kubi", english: "neck", topics: ["body"] },
+      { kanji: "指", kana: "ゆび", romaji: "yubi", english: "finger", topics: ["body"] },
+      { kanji: "爪", kana: "つめ", romaji: "tsume", english: "nail", topics: ["body"] },
+      { kanji: "腕", kana: "うで", romaji: "ude", english: "arm", topics: ["body"] },
+      { kanji: "体", kana: "からだ", romaji: "karada", english: "body", topics: ["body"] },
+      { kanji: "舌", kana: "した", romaji: "shita", english: "tongue", topics: ["body"] },
+      { kanji: "唇", kana: "くちびる", romaji: "kuchibiru", english: "lips", topics: ["body"] },
+      { kanji: "頬", kana: "ほほ", romaji: "hoho", english: "cheek", topics: ["body"] },
+      { kanji: "顎", kana: "あご", romaji: "ago", english: "chin", topics: ["body"] },
+      { kanji: "お尻", kana: "おしり", romaji: "oshiri", english: "buttocks", topics: ["body"] },
+      { kanji: "腿", kana: "もも", romaji: "momo", english: "thigh", topics: ["body"] },
+      { kanji: "足首", kana: "あしくび", romaji: "ashikubi", english: "ankle", topics: ["body"] },
+      { kanji: "踵", kana: "かかと", romaji: "kakato", english: "heel", topics: ["body"] },
+      { kana: "つま先", romaji: "tsumasaki", english: "toe", topics: ["body"] },
+      { kanji: "肘", kana: "ひじ", romaji: "hiji", english: "elbow", topics: ["body"] },
+      { kanji: "手首", kana: "てくび", romaji: "tekubi", english: "wrist", topics: ["body"] },
+      { kanji: "手のひら", kana: "てのひら", romaji: "te no hira", english: "palm", topics: ["body"] },
 
-        };
+      // ── COLORS ──
+      { kanji: "赤", kana: "あか", romaji: "aka", english: "red", topics: ["colors"] },
+      { kanji: "青", kana: "あお", romaji: "ao", english: "blue", topics: ["colors"] },
+      { kanji: "黄色", kana: "きいろ", romaji: "kiiro", english: "yellow", topics: ["colors"] },
+      { kanji: "緑", kana: "みどり", romaji: "midori", english: "green", topics: ["colors"] },
+      { kanji: "白", kana: "しろ", romaji: "shiro", english: "white", topics: ["colors"] },
+      { kanji: "黒", kana: "くろ", romaji: "kuro", english: "black", topics: ["colors"] },
+      { kanji: "紫", kana: "むらさき", romaji: "murasaki", english: "purple", topics: ["colors"] },
+      { kanji: "ピンク", kana: "ピンク", romaji: "pinku", english: "pink", topics: ["colors"] },
+      { kanji: "茶色", kana: "ちゃいろ", romaji: "chairo", english: "brown", topics: ["colors"] },
+      { kanji: "灰色", kana: "はいいろ", romaji: "haiiro", english: "gray", topics: ["colors"] },
+      { kanji: "水色", kana: "みずいろ", romaji: "mizuiro", english: "light blue", topics: ["colors"] },
 
-        // ── topic display names & icons ──
-        const TOPIC_META = {
-            verbs: { label: 'Verbs', icon: '🏃', badge: '30+' },
-            adjectives: { label: 'Adjectives', icon: '🎨', badge: '30+' },
-            nouns: { label: 'Nouns', icon: '📦', badge: '60+' },
-            fruits: { label: 'Fruits', icon: '🍎', badge: '18' },
-            animals: { label: 'Animals', icon: '🐾', badge: '25' },
-            food: { label: 'Food', icon: '🍣', badge: '26' },
-            body: { label: 'Body Parts', icon: '🧍', badge: '20' },
-            family: { label: 'Family', icon: '👪', badge: '15' },
-            colors: { label: 'Colors', icon: '🎨', badge: '14' },
-            numbers: { label: 'Numbers', icon: '🔢', badge: '13' },
-            time: { label: 'Time', icon: '⏰', badge: '22' },
-            weather: { label: 'Weather', icon: '🌤️', badge: '14' },
-            places: { label: 'Places', icon: '📍', badge: '18' },
-            clothing: { label: 'Clothing', icon: '👕', badge: '19' },
-            transport: { label: 'Transport', icon: '🚗', badge: '12' },
-        };
+      // ── PLACES ──
+      { kanji: "学校", kana: "がっこう", romaji: "gakkou", english: "school", topics: ["places", "school"] },
+      { kanji: "会社", kana: "かいしゃ", romaji: "kaisha", english: "company", topics: ["places", "work"] },
+      { kanji: "病院", kana: "びょういん", romaji: "byouin", english: "hospital", topics: ["places", "health"] },
+      { kanji: "薬局", kana: "やっきょく", romaji: "yakkyoku", english: "pharmacy", topics: ["places", "health"] },
+      { kanji: "図書館", kana: "としょかん", romaji: "toshokan", english: "library", topics: ["places"] },
+      { kanji: "郵便局", kana: "ゆうびんきょく", romaji: "yuubinkyoku", english: "post office", topics: ["places"] },
+      { kanji: "駅", kana: "えき", romaji: "eki", english: "station", topics: ["places", "transport"] },
+      { kanji: "空港", kana: "くうこう", romaji: "kuukou", english: "airport", topics: ["places", "transport"] },
+      { kanji: "デパート", kana: "デパート", romaji: "depaato", english: "department store", topics: ["places"] },
+      { kanji: "喫茶店", kana: "きっさてん", romaji: "kissaten", english: "café", topics: ["places", "food"] },
+      { kanji: "レストラン", kana: "レストラン", romaji: "resutoran", english: "restaurant", topics: ["places", "food"] },
+      { kanji: "ホテル", kana: "ホテル", romaji: "hoteru", english: "hotel", topics: ["places"] },
+      { kanji: "お寺", kana: "おてら", romaji: "otera", english: "temple", topics: ["places"] },
+      { kanji: "神社", kana: "じんじゃ", romaji: "jinja", english: "shrine", topics: ["places"] },
+      { kanji: "公園", kana: "こうえん", romaji: "kouen", english: "park", topics: ["places"] },
+      { kanji: "スーパー", kana: "スーパー", romaji: "suupaa", english: "supermarket", topics: ["places"] },
+      { kanji: "コンビニ", kana: "コンビニ", romaji: "konbini", english: "convenience store", topics: ["places"] },
+      { kanji: "銀行", kana: "ぎんこう", romaji: "ginkou", english: "bank", topics: ["places"] },
+      { kanji: "大学", kana: "だいがく", romaji: "daigaku", english: "university", topics: ["places", "school"] },
+      { kanji: "高校", kana: "こうこう", romaji: "koukou", english: "high school", topics: ["places", "school"] },
+      { kanji: "中学校", kana: "ちゅうがっこう", romaji: "chuugakkou", english: "middle school", topics: ["places", "school"] },
+      { kanji: "小学校", kana: "しょうがっこう", romaji: "shougakkou", english: "elementary school", topics: ["places", "school"] },
+      { kanji: "店", kana: "みせ", romaji: "mise", english: "shop", topics: ["places"] },
+      { kanji: "町", kana: "まち", romaji: "machi", english: "town", topics: ["places"] },
+      { kanji: "村", kana: "むら", romaji: "mura", english: "village", topics: ["places"] },
+      { kanji: "都市", kana: "とし", romaji: "toshi", english: "city", topics: ["places"] },
+      { kanji: "国", kana: "くに", romaji: "kuni", english: "country", topics: ["places"] },
+      { kanji: "世界", kana: "せかい", romaji: "sekai", english: "world", topics: ["places"] },
+      { kanji: "部屋", kana: "へや", romaji: "heya", english: "room", topics: ["places", "house"] },
+      { kanji: "台所", kana: "だいどころ", romaji: "daidokoro", english: "kitchen", topics: ["places", "house"] },
+      { kanji: "トイレ", kana: "トイレ", romaji: "toire", english: "toilet", topics: ["places", "house"] },
+      { kanji: "お風呂", kana: "おふろ", romaji: "ofuro", english: "bath", topics: ["places", "house"] },
+      { kanji: "庭", kana: "にわ", romaji: "niwa", english: "garden", topics: ["places", "house"] },
+      { kanji: "家", kana: "いえ", romaji: "ie", english: "house / home", topics: ["places", "house"] },
+      { kanji: "アパート", kana: "アパート", romaji: "apaato", english: "apartment", topics: ["places", "house"] },
+      { kanji: "建物", kana: "たてもの", romaji: "tatemono", english: "building", topics: ["places"] },
+      { kanji: "階段", kana: "かいだん", romaji: "kaidan", english: "stairs", topics: ["places", "house"] },
+      { kanji: "エレベーター", kana: "エレベーター", romaji: "erebeetaa", english: "elevator", topics: ["places"] },
+      { kanji: "道", kana: "みち", romaji: "michi", english: "road / way", topics: ["places", "directions"] },
+      { kanji: "交差点", kana: "こうさてん", romaji: "kousaten", english: "intersection", topics: ["places", "directions"] },
+      { kanji: "橋", kana: "はし", romaji: "hashi", english: "bridge", topics: ["places"] },
+      { kanji: "映画館", kana: "えいがかん", romaji: "eigakan", english: "movie theater", topics: ["places"] },
+      { kanji: "美術館", kana: "びじゅつかん", romaji: "bijutsukan", english: "art museum", topics: ["places", "arts"] },
 
-        // ═══════════════════════════════════════════════════════════════
-        //  A P P   S T A T E
-        // ═══════════════════════════════════════════════════════════════
+      // ── TRANSPORT ──
+      { kanji: "車", kana: "くるま", romaji: "kuruma", english: "car", topics: ["transport"] },
+      { kanji: "電車", kana: "でんしゃ", romaji: "densha", english: "train", topics: ["transport"] },
+      { kanji: "バス", kana: "バス", romaji: "basu", english: "bus", topics: ["transport"] },
+      { kanji: "飛行機", kana: "ひこうき", romaji: "hikouki", english: "airplane", topics: ["transport"] },
+      { kanji: "船", kana: "ふね", romaji: "fune", english: "ship / boat", topics: ["transport"] },
+      { kanji: "自転車", kana: "じてんしゃ", romaji: "jitensha", english: "bicycle", topics: ["transport"] },
+      { kanji: "バイク", kana: "バイク", romaji: "baiku", english: "motorbike", topics: ["transport"] },
+      { kanji: "タクシー", kana: "タクシー", romaji: "takushii", english: "taxi", topics: ["transport"] },
+      { kanji: "地下鉄", kana: "ちかてつ", romaji: "chikatetsu", english: "subway", topics: ["transport"] },
+      { kanji: "新幹線", kana: "しんかんせん", romaji: "shinkansen", english: "bullet train", topics: ["transport"] },
+      { kanji: "列車", kana: "れっしゃ", romaji: "ressha", english: "train", topics: ["transport"] },
+      { kanji: "乗り物", kana: "のりもの", romaji: "norimono", english: "vehicle", topics: ["transport"] },
+      { kanji: "切符", kana: "きっぷ", romaji: "kippu", english: "ticket", topics: ["transport"] },
+      { kanji: "定期券", kana: "ていきけん", romaji: "teikiken", english: "commuter pass", topics: ["transport"] },
+      { kanji: "運賃", kana: "うんちん", romaji: "unchin", english: "fare", topics: ["transport"] },
+      { kanji: "料金", kana: "りょうきん", romaji: "ryoukin", english: "fee", topics: ["transport"] },
+      { kanji: "改札口", kana: "かいさつぐち", romaji: "kaisatsuguchi", english: "ticket gate", topics: ["transport"] },
+      { kanji: "ホーム", kana: "ホーム", romaji: "hoomu", english: "platform", topics: ["transport"] },
+      { kanji: "駅員", kana: "えきいん", romaji: "ekiin", english: "station staff", topics: ["transport", "work"] },
+      { kanji: "車掌", kana: "しゃしょう", romaji: "shashou", english: "conductor", topics: ["transport", "work"] },
+      { kanji: "信号", kana: "しんごう", romaji: "shingou", english: "traffic light", topics: ["transport"] },
+      { kanji: "道路", kana: "どうろ", romaji: "douro", english: "road", topics: ["transport"] },
+      { kanji: "バス停", kana: "バスてい", romaji: "basutei", english: "bus stop", topics: ["transport"] },
+      { kanji: "駐車場", kana: "ちゅうしゃじょう", romaji: "chuushajou", english: "parking lot", topics: ["transport"] },
+      { kanji: "事故", kana: "じこ", romaji: "jiko", english: "accident", topics: ["transport"] },
+      { kanji: "渋滞", kana: "じゅうたい", romaji: "juutai", english: "traffic jam", topics: ["transport"] },
 
-        let state = {
-            topic: null, // e.g. 'verbs'
-            words: [], // array of {romaji, english}
-            currentWord: null, // {romaji, english}
-            options: [], // [ {english, isCorrect}, ... ]
-            answered: false,
-            questionIndex: 0,
-            totalQuestions: 0,
-        };
+      // ── CLOTHING ──
+      { kanji: "服", kana: "ふく", romaji: "fuku", english: "clothes", topics: ["clothing"] },
+      { kanji: "靴", kana: "くつ", romaji: "kutsu", english: "shoes", topics: ["clothing"] },
+      { kanji: "靴下", kana: "くつした", romaji: "kutsushita", english: "socks", topics: ["clothing"] },
+      { kanji: "ズボン", kana: "ズボン", romaji: "zubon", english: "pants", topics: ["clothing"] },
+      { kanji: "シャツ", kana: "シャツ", romaji: "shatsu", english: "shirt", topics: ["clothing"] },
+      { kanji: "ワイシャツ", kana: "ワイシャツ", romaji: "waishatsu", english: "dress shirt", topics: ["clothing"] },
+      { kanji: "スカート", kana: "スカート", romaji: "sukaato", english: "skirt", topics: ["clothing"] },
+      { kanji: "ドレス", kana: "ドレス", romaji: "doresu", english: "dress", topics: ["clothing"] },
+      { kanji: "ジャケット", kana: "ジャケット", romaji: "jaketto", english: "jacket", topics: ["clothing"] },
+      { kanji: "コート", kana: "コート", romaji: "kooto", english: "coat", topics: ["clothing"] },
+      { kanji: "背広", kana: "せびろ", romaji: "sebiro", english: "suit", topics: ["clothing"] },
+      { kanji: "ネクタイ", kana: "ネクタイ", romaji: "nekutai", english: "tie", topics: ["clothing"] },
+      { kanji: "帽子", kana: "ぼうし", romaji: "boushi", english: "hat", topics: ["clothing"] },
+      { kanji: "眼鏡", kana: "めがね", romaji: "megane", english: "glasses", topics: ["clothing"] },
+      { kanji: "手袋", kana: "てぶくろ", romaji: "tebukuro", english: "gloves", topics: ["clothing"] },
+      { kanji: "マフラー", kana: "マフラー", romaji: "mafuraa", english: "scarf", topics: ["clothing"] },
+      { kanji: "ベルト", kana: "ベルト", romaji: "beruto", english: "belt", topics: ["clothing"] },
+      { kanji: "鞄", kana: "かばん", romaji: "kaban", english: "bag", topics: ["clothing", "school"] },
+      { kanji: "財布", kana: "さいふ", romaji: "saifu", english: "wallet", topics: ["clothing"] },
+      { kanji: "傘", kana: "かさ", romaji: "kasa", english: "umbrella", topics: ["clothing"] },
+      { kanji: "時計", kana: "とけい", romaji: "tokei", english: "watch / clock", topics: ["clothing"] },
+      { kanji: "指輪", kana: "ゆびわ", romaji: "yubiwa", english: "ring", topics: ["clothing"] },
+      { kanji: "ハンカチ", kana: "ハンカチ", romaji: "hankachi", english: "handkerchief", topics: ["clothing"] },
+      { kanji: "タオル", kana: "タオル", romaji: "taoru", english: "towel", topics: ["clothing"] },
+      { kanji: "セーター", kana: "セーター", romaji: "seetaa", english: "sweater", topics: ["clothing"] },
+      { kanji: "上着", kana: "うわぎ", romaji: "uwagi", english: "jacket", topics: ["clothing"] },
+      { kanji: "下着", kana: "したぎ", romaji: "shitagi", english: "underwear", topics: ["clothing"] },
+      { kanji: "Tシャツ", kana: "Tシャツ", romaji: "T-shatsu", english: "T-shirt", topics: ["clothing"] },
+      { kanji: "ワンピース", kana: "ワンピース", romaji: "wanpiisu", english: "dress", topics: ["clothing"] },
+      { kanji: "スーツ", kana: "スーツ", romaji: "suutsu", english: "suit", topics: ["clothing"] },
+      { kanji: "制服", kana: "せいふく", romaji: "seifuku", english: "uniform", topics: ["clothing", "school"] },
+      { kanji: "着物", kana: "きもの", romaji: "kimono", english: "kimono", topics: ["clothing"] },
+      { kanji: "浴衣", kana: "ゆかた", romaji: "yukata", english: "yukata", topics: ["clothing"] },
+      { kanji: "スニーカー", kana: "スニーカー", romaji: "suniikaa", english: "sneakers", topics: ["clothing"] },
+      { kanji: "ブーツ", kana: "ブーツ", romaji: "buutsu", english: "boots", topics: ["clothing"] },
+      { kanji: "サンダル", kana: "サンダル", romaji: "sandaru", english: "sandals", topics: ["clothing"] },
+      { kanji: "スリッパ", kana: "スリッパ", romaji: "surippa", english: "slippers", topics: ["clothing"] },
+      { kanji: "ボタン", kana: "ボタン", romaji: "botan", english: "button", topics: ["clothing"] },
+      { kanji: "ポケット", kana: "ポケット", romaji: "poketto", english: "pocket", topics: ["clothing"] },
+      { kanji: "袖", kana: "そで", romaji: "sode", english: "sleeve", topics: ["clothing"] },
+      { kanji: "襟", kana: "えり", romaji: "eri", english: "collar", topics: ["clothing"] },
+      { kanji: "サイズ", kana: "サイズ", romaji: "saizu", english: "size", topics: ["clothing"] },
 
-        // DOM refs
-        const $ = id => document.getElementById(id);
-        const homeArea = $('homeArea');
-        const quizArea = $('quizArea');
-        const topicGrid = $('topicGrid');
-        const quizTopicLabel = $('quizTopicLabel');
-        const romajiDisplay = $('romajiDisplay');
-        const optionsContainer = $('optionsContainer');
-        const nextBtn = $('nextBtn');
-        const backBtn = $('backBtn');
-        const questionCount = $('questionCount');
+      // ── HOUSE & HOME ──
+      { kanji: "窓", kana: "まど", romaji: "mado", english: "window", topics: ["house"] },
+      { kanji: "ドア", kana: "ドア", romaji: "doa", english: "door", topics: ["house"] },
+      { kanji: "壁", kana: "かべ", romaji: "kabe", english: "wall", topics: ["house"] },
+      { kanji: "床", kana: "ゆか", romaji: "yuka", english: "floor", topics: ["house"] },
+      { kanji: "天井", kana: "てんじょう", romaji: "tenjou", english: "ceiling", topics: ["house"] },
+      { kanji: "ベッド", kana: "ベッド", romaji: "beddo", english: "bed", topics: ["house"] },
+      { kanji: "机", kana: "つくえ", romaji: "tsukue", english: "desk", topics: ["house", "school"] },
+      { kanji: "椅子", kana: "いす", romaji: "isu", english: "chair", topics: ["house", "school"] },
+      { kanji: "棚", kana: "たな", romaji: "tana", english: "shelf", topics: ["house"] },
+      { kanji: "電気", kana: "でんき", romaji: "denki", english: "light / electricity", topics: ["house", "tech"] },
+      { kanji: "鍵", kana: "かぎ", romaji: "kagi", english: "key / lock", topics: ["house"] },
+      { kanji: "電話", kana: "でんわ", romaji: "denwa", english: "telephone", topics: ["house", "tech"] },
+      { kanji: "テレビ", kana: "テレビ", romaji: "terebi", english: "television", topics: ["house", "tech"] },
+      { kanji: "冷蔵庫", kana: "れいぞうこ", romaji: "reizouko", english: "refrigerator", topics: ["house"] },
+      { kanji: "洗濯機", kana: "せんたくき", romaji: "sentakuki", english: "washing machine", topics: ["house"] },
+      { kanji: "掃除機", kana: "そうじき", romaji: "soujiki", english: "vacuum cleaner", topics: ["house"] },
+      { kanji: "鍋", kana: "なべ", romaji: "nabe", english: "pot / pan", topics: ["house"] },
+      { kanji: "フライパン", kana: "フライパン", romaji: "furaipan", english: "frying pan", topics: ["house"] },
+      { kanji: "コップ", kana: "コップ", romaji: "koppu", english: "cup / glass", topics: ["house"] },
+      { kanji: "皿", kana: "さら", romaji: "sara", english: "plate / dish", topics: ["house"] },
+      { kanji: "箸", kana: "はし", romaji: "hashi", english: "chopsticks", topics: ["house", "food"] },
+      { kanji: "スプーン", kana: "スプーン", romaji: "supuun", english: "spoon", topics: ["house", "food"] },
+      { kanji: "ナイフ", kana: "ナイフ", romaji: "naifu", english: "knife", topics: ["house", "food"] },
+      { kanji: "フォーク", kana: "フォーク", romaji: "fooku", english: "fork", topics: ["house", "food"] },
+      { kanji: "玄関", kana: "げんかん", romaji: "genkan", english: "entrance", topics: ["house"] },
+      { kanji: "居間", kana: "いま", romaji: "ima", english: "living room", topics: ["house"] },
+      { kanji: "寝室", kana: "しんしつ", romaji: "shinshitsu", english: "bedroom", topics: ["house"] },
+      { kanji: "押入れ", kana: "おしいれ", romaji: "oshiire", english: "closet", topics: ["house"] },
+      { kanji: "引き出し", kana: "ひきだし", romaji: "hikidashi", english: "drawer", topics: ["house"] },
+      { kanji: "本棚", kana: "ほんだな", romaji: "hondana", english: "bookshelf", topics: ["house"] },
+      { kanji: "電子レンジ", kana: "でんしレンジ", romaji: "denshi renji", english: "microwave", topics: ["house", "tech"] },
+      { kanji: "炊飯器", kana: "すいはんき", romaji: "suihanki", english: "rice cooker", topics: ["house"] },
+      { kanji: "アイロン", kana: "アイロン", romaji: "airon", english: "iron", topics: ["house"] },
+      { kanji: "ハンガー", kana: "ハンガー", romaji: "hangaa", english: "hanger", topics: ["house"] },
+      { kanji: "洗剤", kana: "せんざい", romaji: "senzai", english: "detergent", topics: ["house"] },
+      { kanji: "スポンジ", kana: "スポンジ", romaji: "suponji", english: "sponge", topics: ["house"] },
+      { kanji: "バケツ", kana: "バケツ", romaji: "baketsu", english: "bucket", topics: ["house"] },
+      { kanji: "雑巾", kana: "ぞうきん", romaji: "zoukin", english: "rag", topics: ["house"] },
+      { kanji: "箒", kana: "ほうき", romaji: "houki", english: "broom", topics: ["house"] },
+      { kanji: "塵取り", kana: "ちりとり", romaji: "chiritori", english: "dustpan", topics: ["house"] },
+      { kanji: "ゴミ箱", kana: "ゴミばこ", romaji: "gomibako", english: "trash can", topics: ["house"] },
 
-        // ── helpers ──
-        function shuffle(arr) {
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-            return arr;
+      // ── WEATHER & NATURE ──
+      { kanji: "天気", kana: "てんき", romaji: "tenki", english: "weather", topics: ["weather"] },
+      { kanji: "晴れ", kana: "はれ", romaji: "hare", english: "sunny / clear", topics: ["weather"] },
+      { kanji: "雨", kana: "あめ", romaji: "ame", english: "rain", topics: ["weather"] },
+      { kanji: "雪", kana: "ゆき", romaji: "yuki", english: "snow", topics: ["weather"] },
+      { kanji: "風", kana: "かぜ", romaji: "kaze", english: "wind", topics: ["weather"] },
+      { kanji: "雲", kana: "くも", romaji: "kumo", english: "cloud", topics: ["weather"] },
+      { kanji: "嵐", kana: "あらし", romaji: "arashi", english: "storm", topics: ["weather"] },
+      { kanji: "台風", kana: "たいふう", romaji: "taifuu", english: "typhoon", topics: ["weather"] },
+      { kanji: "雷", kana: "かみなり", romaji: "kaminari", english: "thunder / lightning", topics: ["weather"] },
+      { kanji: "虹", kana: "にじ", romaji: "niji", english: "rainbow", topics: ["weather"] },
+      { kanji: "霧", kana: "きり", romaji: "kiri", english: "fog / mist", topics: ["weather"] },
+      { kanji: "空", kana: "そら", romaji: "sora", english: "sky", topics: ["weather"] },
+      { kanji: "太陽", kana: "たいよう", romaji: "taiyou", english: "sun", topics: ["weather"] },
+      { kanji: "星", kana: "ほし", romaji: "hoshi", english: "star", topics: ["weather"] },
+      { kanji: "海", kana: "うみ", romaji: "umi", english: "sea / ocean", topics: ["weather"] },
+      { kanji: "山", kana: "やま", romaji: "yama", english: "mountain", topics: ["weather"] },
+      { kanji: "川", kana: "かわ", romaji: "kawa", english: "river", topics: ["weather"] },
+      { kanji: "森", kana: "もり", romaji: "mori", english: "forest", topics: ["weather"] },
+      { kanji: "木", kana: "き", romaji: "ki", english: "tree", topics: ["weather"] },
+      { kanji: "花", kana: "はな", romaji: "hana", english: "flower", topics: ["weather"] },
+      { kanji: "草", kana: "くさ", romaji: "kusa", english: "grass", topics: ["weather"] },
+      { kanji: "石", kana: "いし", romaji: "ishi", english: "stone", topics: ["weather"] },
+      { kanji: "島", kana: "しま", romaji: "shima", english: "island", topics: ["weather"] },
+      { kanji: "池", kana: "いけ", romaji: "ike", english: "pond", topics: ["weather"] },
+      { kanji: "夏", kana: "なつ", romaji: "natsu", english: "summer", topics: ["weather"] },
+      { kanji: "冬", kana: "ふゆ", romaji: "fuyu", english: "winter", topics: ["weather"] },
+      { kanji: "春", kana: "はる", romaji: "haru", english: "spring", topics: ["weather"] },
+      { kanji: "秋", kana: "あき", romaji: "aki", english: "autumn / fall", topics: ["weather"] },
+      { kanji: "天気予報", kana: "てんきよほう", romaji: "tenki yohou", english: "weather forecast", topics: ["weather"] },
+      { kanji: "気温", kana: "きおん", romaji: "kion", english: "temperature", topics: ["weather"] },
+      { kanji: "湿度", kana: "しつど", romaji: "shitsudo", english: "humidity", topics: ["weather"] },
+      { kanji: "梅雨", kana: "つゆ", romaji: "tsuyu", english: "rainy season", topics: ["weather"] },
+      { kanji: "季節", kana: "きせつ", romaji: "kisetsu", english: "season", topics: ["weather"] },
+      { kanji: "自然", kana: "しぜん", romaji: "shizen", english: "nature", topics: ["weather"] },
+      { kanji: "地震", kana: "じしん", romaji: "jishin", english: "earthquake", topics: ["weather"] },
+      { kanji: "湖", kana: "みずうみ", romaji: "mizuumi", english: "lake", topics: ["weather"] },
+      { kanji: "滝", kana: "たき", romaji: "taki", english: "waterfall", topics: ["weather"] },
+      { kanji: "波", kana: "なみ", romaji: "nami", english: "wave", topics: ["weather"] },
+      { kanji: "氷", kana: "こおり", romaji: "koori", english: "ice", topics: ["weather"] },
+      { kanji: "霜", kana: "しも", romaji: "shimo", english: "frost", topics: ["weather"] },
+      { kanji: "露", kana: "つゆ", romaji: "tsuyu", english: "dew", topics: ["weather"] },
+      { kanji: "煙", kana: "けむり", romaji: "kemuri", english: "smoke", topics: ["weather"] },
+      { kanji: "湯気", kana: "ゆげ", romaji: "yuge", english: "steam", topics: ["weather"] },
+
+      // ── SCHOOL ──
+      { kanji: "宿題", kana: "しゅくだい", romaji: "shukudai", english: "homework", topics: ["school"] },
+      { kanji: "テスト", kana: "テスト", romaji: "tesuto", english: "test", topics: ["school"] },
+      { kanji: "試験", kana: "しけん", romaji: "shiken", english: "exam", topics: ["school"] },
+      { kanji: "授業", kana: "じゅぎょう", romaji: "jugyou", english: "class / lesson", topics: ["school"] },
+      { kanji: "本", kana: "ほん", romaji: "hon", english: "book", topics: ["school"] },
+      { kanji: "ノート", kana: "ノート", romaji: "nooto", english: "notebook", topics: ["school"] },
+      { kanji: "鉛筆", kana: "えんぴつ", romaji: "enpitsu", english: "pencil", topics: ["school"] },
+      { kanji: "ペン", kana: "ペン", romaji: "pen", english: "pen", topics: ["school"] },
+      { kanji: "消しゴム", kana: "けしゴム", romaji: "keshigomu", english: "eraser", topics: ["school"] },
+      { kanji: "辞書", kana: "じしょ", romaji: "jisho", english: "dictionary", topics: ["school"] },
+      { kanji: "紙", kana: "かみ", romaji: "kami", english: "paper", topics: ["school"] },
+      { kanji: "新聞", kana: "しんぶん", romaji: "shinbun", english: "newspaper", topics: ["school"] },
+      { kanji: "雑誌", kana: "ざっし", romaji: "zasshi", english: "magazine", topics: ["school"] },
+      { kanji: "絵", kana: "え", romaji: "e", english: "picture / drawing", topics: ["school", "arts"] },
+      { kanji: "音楽", kana: "おんがく", romaji: "ongaku", english: "music", topics: ["school", "arts"] },
+      { kanji: "歌", kana: "うた", romaji: "uta", english: "song", topics: ["school", "arts"] },
+      { kanji: "映画", kana: "えいが", romaji: "eiga", english: "movie", topics: ["school", "arts"] },
+      { kanji: "教室", kana: "きょうしつ", romaji: "kyoushitsu", english: "classroom", topics: ["school"] },
+      { kanji: "黒板", kana: "こくばん", romaji: "kokuban", english: "blackboard", topics: ["school"] },
+      { kanji: "幼稚園", kana: "ようちえん", romaji: "youchien", english: "kindergarten", topics: ["school"] },
+      { kanji: "保育園", kana: "ほいくえん", romaji: "hoikuen", english: "nursery school", topics: ["school"] },
+      { kanji: "大学院", kana: "だいがくいん", romaji: "daigakuin", english: "graduate school", topics: ["school"] },
+      { kanji: "専門学校", kana: "せんもんがっこう", romaji: "senmon gakkou", english: "vocational school", topics: ["school"] },
+      { kanji: "塾", kana: "じゅく", romaji: "juku", english: "cram school", topics: ["school"] },
+      { kanji: "入学式", kana: "にゅうがくしき", romaji: "nyuugakushiki", english: "entrance ceremony", topics: ["school"] },
+      { kanji: "卒業式", kana: "そつぎょうしき", romaji: "sotsugyoushiki", english: "graduation ceremony", topics: ["school"] },
+      { kanji: "運動会", kana: "うんどうかい", romaji: "undoukai", english: "sports day", topics: ["school", "sports"] },
+      { kanji: "文化祭", kana: "ぶんかさい", romaji: "bunkasai", english: "cultural festival", topics: ["school"] },
+      { kanji: "修学旅行", kana: "しゅうがくりょこう", romaji: "shuugakuryokou", english: "school trip", topics: ["school"] },
+      { kanji: "遠足", kana: "えんそく", romaji: "ensoku", english: "excursion", topics: ["school"] },
+      { kanji: "部活動", kana: "ぶかつどう", romaji: "bukatsudou", english: "club activity", topics: ["school"] },
+      { kanji: "サークル", kana: "サークル", romaji: "saakuru", english: "circle", topics: ["school"] },
+      { kanji: "生徒会", kana: "せいとかい", romaji: "seitokai", english: "student council", topics: ["school"] },
+      { kanji: "担任", kana: "たんにん", romaji: "tannin", english: "homeroom teacher", topics: ["school", "work"] },
+      { kanji: "教授", kana: "きょうじゅ", romaji: "kyouju", english: "professor", topics: ["school", "work"] },
+      { kanji: "単位", kana: "たんい", romaji: "tani", english: "credit", topics: ["school"] },
+      { kanji: "成績", kana: "せいせき", romaji: "seiseki", english: "grades", topics: ["school"] },
+      { kanji: "研究", kana: "けんきゅう", romaji: "kenkyuu", english: "research", topics: ["school"] },
+      { kanji: "実験", kana: "じっけん", romaji: "jikken", english: "experiment", topics: ["school"] },
+      { kanji: "発表", kana: "はっぴょう", romaji: "happyou", english: "presentation", topics: ["school"] },
+      { kanji: "課題", kana: "かだい", romaji: "kadai", english: "assignment", topics: ["school"] },
+      { kanji: "作文", kana: "さくぶん", romaji: "sakubun", english: "essay", topics: ["school"] },
+      { kanji: "日記", kana: "にっき", romaji: "nikki", english: "diary", topics: ["school"] },
+      { kanji: "国語", kana: "こくご", romaji: "kokugo", english: "national language", topics: ["school"] },
+      { kanji: "理科", kana: "りか", romaji: "rika", english: "science", topics: ["school"] },
+      { kanji: "地理", kana: "ちり", romaji: "chiri", english: "geography", topics: ["school"] },
+      { kanji: "公民", kana: "こうみん", romaji: "koumin", english: "civics", topics: ["school"] },
+      { kanji: "政治", kana: "せいじ", romaji: "seiji", english: "politics", topics: ["school"] },
+      { kanji: "経済", kana: "けいざい", romaji: "keizai", english: "economics", topics: ["school"] },
+      { kanji: "商業", kana: "しょうぎょう", romaji: "shougyou", english: "commerce", topics: ["school"] },
+      { kanji: "工業", kana: "こうぎょう", romaji: "kougyou", english: "industry", topics: ["school"] },
+      { kanji: "農業", kana: "のうぎょう", romaji: "nougyou", english: "agriculture", topics: ["school"] },
+      { kanji: "水産", kana: "すいさん", romaji: "suisan", english: "fisheries", topics: ["school"] },
+      { kanji: "家政", kana: "かせい", romaji: "kasei", english: "home economics", topics: ["school"] },
+      { kanji: "家庭科", kana: "かていか", romaji: "kateika", english: "home economics", topics: ["school"] },
+      { kanji: "図画工作", kana: "ずがこうさく", romaji: "zuga kousaku", english: "arts and crafts", topics: ["school", "arts"] },
+      { kanji: "体育", kana: "たいいく", romaji: "taiiku", english: "physical education", topics: ["school", "sports"] },
+      { kanji: "保健体育", kana: "ほけんたいいく", romaji: "hoken taiiku", english: "health and physical education", topics: ["school", "sports", "health"] },
+      { kanji: "道徳", kana: "どうとく", romaji: "doutoku", english: "moral education", topics: ["school"] },
+      { kanji: "総合学習", kana: "そうごうがくしゅう", romaji: "sougou gakushuu", english: "integrated studies", topics: ["school"] },
+      { kanji: "特別活動", kana: "とくべつかつどう", romaji: "tokubetsu katsudou", english: "special activities", topics: ["school"] },
+      { kanji: "ホームルーム", kana: "ホームルーム", romaji: "hoomuruumu", english: "homeroom", topics: ["school"] },
+
+      // ── WORK ──
+      { kanji: "仕事", kana: "しごと", romaji: "shigoto", english: "work / job", topics: ["work"] },
+      { kanji: "会議", kana: "かいぎ", romaji: "kaigi", english: "meeting", topics: ["work"] },
+      { kanji: "社長", kana: "しゃちょう", romaji: "shachou", english: "company president", topics: ["work"] },
+      { kanji: "部長", kana: "ぶちょう", romaji: "buchou", english: "department manager", topics: ["work"] },
+      { kanji: "課長", kana: "かちょう", romaji: "kachou", english: "section chief", topics: ["work"] },
+      { kanji: "店員", kana: "てんいん", romaji: "tenin", english: "shop clerk", topics: ["work"] },
+      { kanji: "看護師", kana: "かんごし", romaji: "kangoshi", english: "nurse", topics: ["work", "health"] },
+      { kanji: "運転手", kana: "うんてんしゅ", romaji: "untenshu", english: "driver", topics: ["work", "transport"] },
+      { kanji: "校長", kana: "こうちょう", romaji: "kouchou", english: "principal", topics: ["work", "school"] },
+      { kanji: "主婦", kana: "しゅふ", romaji: "shufu", english: "housewife", topics: ["work"] },
+      { kanji: "弁護士", kana: "べんごし", romaji: "bengoshi", english: "lawyer", topics: ["work"] },
+      { kanji: "公務員", kana: "こうむいん", romaji: "koumuin", english: "civil servant", topics: ["work"] },
+      { kanji: "警察官", kana: "けいさつかん", romaji: "keisatsukan", english: "police officer", topics: ["work"] },
+      { kanji: "消防士", kana: "しょうぼうし", romaji: "shouboushi", english: "firefighter", topics: ["work"] },
+      { kanji: "歯医者", kana: "はいしゃ", romaji: "haisha", english: "dentist", topics: ["work", "health"] },
+      { kanji: "薬剤師", kana: "やくざいし", romaji: "yakuzaishi", english: "pharmacist", topics: ["work", "health"] },
+      { kanji: "調理師", kana: "ちょうりし", romaji: "chourishi", english: "cook", topics: ["work", "food"] },
+      { kanji: "パイロット", kana: "パイロット", romaji: "pairotto", english: "pilot", topics: ["work", "transport"] },
+      { kanji: "客室乗務員", kana: "きゃくしつじょうむいん", romaji: "kyakushitsu joumuin", english: "flight attendant", topics: ["work", "transport"] },
+      { kanji: "配達員", kana: "はいたついん", romaji: "haitatsuin", english: "delivery person", topics: ["work"] },
+      { kanji: "郵便配達員", kana: "ゆうびんはいたついん", romaji: "yuubin haitatsuin", english: "postman", topics: ["work"] },
+      { kanji: "清掃員", kana: "せいそういん", romaji: "seisouin", english: "cleaner", topics: ["work"] },
+      { kanji: "警備員", kana: "けいびいん", romaji: "keibiin", english: "security guard", topics: ["work"] },
+      { kanji: "大工", kana: "だいく", romaji: "daiku", english: "carpenter", topics: ["work"] },
+      { kanji: "庭師", kana: "にわし", romaji: "niwashi", english: "gardener", topics: ["work"] },
+      { kanji: "画家", kana: "がか", romaji: "gaka", english: "painter", topics: ["work", "arts"] },
+
+      // ── QUESTION WORDS ──
+      { kanji: "何", kana: "なに", romaji: "nani", english: "what", topics: ["questions"] },
+      { kanji: "誰", kana: "だれ", romaji: "dare", english: "who", topics: ["questions"] },
+      { kanji: "何方", kana: "どなた", romaji: "donata", english: "who (polite)", topics: ["questions"] },
+      { kanji: "何処", kana: "どこ", romaji: "doko", english: "where", topics: ["questions"] },
+      { kanji: "何時", kana: "いつ", romaji: "itsu", english: "when", topics: ["questions"] },
+      { kana: "どう", romaji: "dou", english: "how", topics: ["questions"] },
+      { kanji: "何故", kana: "なぜ", romaji: "naze", english: "why", topics: ["questions"] },
+      { kana: "どうして", romaji: "doushite", english: "why", topics: ["questions"] },
+      { kanji: "幾つ", kana: "いくつ", romaji: "ikutsu", english: "how many / how old", topics: ["questions"] },
+      { kana: "どれ", romaji: "dore", english: "which one", topics: ["questions"] },
+      { kana: "どっち", romaji: "docchi", english: "which one (of two)", topics: ["questions"] },
+      { kanji: "何方", kana: "どちら", romaji: "dochira", english: "which one (polite)", topics: ["questions"] },
+      { kana: "どの", romaji: "dono", english: "which (before noun)", topics: ["questions"] },
+      { kanji: "何時", kana: "なんじ", romaji: "nanji", english: "what time", topics: ["questions", "time"] },
+      { kanji: "何人", kana: "なんにん", romaji: "nannin", english: "how many people", topics: ["questions"] },
+
+      // ── GREETINGS & EXPRESSIONS ──
+      { kana: "おはようございます", romaji: "ohayou gozaimasu", english: "good morning", topics: ["greetings"] },
+      { kana: "こんにちは", romaji: "konnichiwa", english: "hello / good afternoon", topics: ["greetings"] },
+      { kana: "こんばんは", romaji: "konbanwa", english: "good evening", topics: ["greetings"] },
+      { kana: "おやすみなさい", romaji: "oyasuminasai", english: "good night", topics: ["greetings"] },
+      { kana: "さようなら", romaji: "sayounara", english: "goodbye", topics: ["greetings"] },
+      { kana: "じゃあね", romaji: "jaa ne", english: "see you", topics: ["greetings"] },
+      { kana: "またね", romaji: "mata ne", english: "see you later", topics: ["greetings"] },
+      { kana: "ありがとうございます", romaji: "arigatou gozaimasu", english: "thank you (polite)", topics: ["greetings"] },
+      { kana: "ありがとう", romaji: "arigatou", english: "thanks", topics: ["greetings"] },
+      { kana: "どういたしまして", romaji: "douitashimashite", english: "you're welcome", topics: ["greetings"] },
+      { kana: "すみません", romaji: "sumimasen", english: "excuse me / sorry", topics: ["greetings"] },
+      { kana: "ごめんなさい", romaji: "gomen nasai", english: "I'm sorry", topics: ["greetings"] },
+      { kanji: "はい", kana: "はい", romaji: "hai", english: "yes", topics: ["greetings"] },
+      { kanji: "いいえ", kana: "いいえ", romaji: "iie", english: "no", topics: ["greetings"] },
+      { kana: "お願いします", romaji: "onegaishimasu", english: "please", topics: ["greetings"] },
+      { kana: "ください", romaji: "kudasai", english: "please (give me)", topics: ["greetings"] },
+      { kana: "どうぞ", romaji: "douzo", english: "please (go ahead)", topics: ["greetings"] },
+      { kana: "失礼します", romaji: "shitsurei shimasu", english: "excuse me / goodbye", topics: ["greetings"] },
+      { kana: "初めまして", romaji: "hajimemashite", english: "nice to meet you", topics: ["greetings"] },
+      { kana: "宜しくお願いします", romaji: "yoroshiku onegaishimasu", english: "pleased to meet you", topics: ["greetings"] },
+      { kana: "お疲れ様でした", romaji: "otsukaresama deshita", english: "thank you for your hard work", topics: ["greetings"] },
+      { kana: "いってらっしゃい", romaji: "itterasshai", english: "have a good day", topics: ["greetings"] },
+      { kana: "ただいま", romaji: "tadaima", english: "I'm home", topics: ["greetings"] },
+      { kana: "お帰りなさい", romaji: "okaeri nasai", english: "welcome home", topics: ["greetings"] },
+      { kana: "いただきます", romaji: "itadakimasu", english: "thanks for the meal (before)", topics: ["greetings"] },
+      { kana: "ご馳走様でした", romaji: "gochisousama deshita", english: "thanks for the meal (after)", topics: ["greetings"] },
+      { kana: "気をつけて", romaji: "ki o tsukete", english: "take care", topics: ["greetings"] },
+      { kana: "頑張って", romaji: "ganbatte", english: "do your best", topics: ["greetings"] },
+      { kana: "おめでとう", romaji: "omedetou", english: "congratulations", topics: ["greetings"] },
+      { kanji: "大丈夫", kana: "だいじょうぶ", romaji: "daijoubu", english: "it's okay", topics: ["greetings"] },
+      { kanji: "分かりました", kana: "わかりました", romaji: "wakarimashita", english: "I understand", topics: ["greetings"] },
+      { kanji: "分かりません", kana: "わかりません", romaji: "wakarimasen", english: "I don't understand", topics: ["greetings"] },
+      { kanji: "知っています", kana: "しっています", romaji: "shitte imasu", english: "I know", topics: ["greetings"] },
+      { kanji: "知りません", kana: "しりません", romaji: "shirimasen", english: "I don't know", topics: ["greetings"] },
+      { kanji: "残念です", kana: "ざんねんです", romaji: "zannen desu", english: "that's a shame", topics: ["greetings"] },
+
+      // ── DIRECTIONS ──
+      { kanji: "左", kana: "ひだり", romaji: "hidari", english: "left", topics: ["directions"] },
+      { kanji: "右", kana: "みぎ", romaji: "migi", english: "right", topics: ["directions"] },
+      { kanji: "後ろ", kana: "うしろ", romaji: "ushiro", english: "back / behind", topics: ["directions"] },
+      { kanji: "上", kana: "うえ", romaji: "ue", english: "up / above", topics: ["directions"] },
+      { kanji: "下", kana: "した", romaji: "shita", english: "down / below", topics: ["directions"] },
+      { kanji: "中", kana: "なか", romaji: "naka", english: "inside / middle", topics: ["directions"] },
+      { kanji: "外", kana: "そと", romaji: "soto", english: "outside", topics: ["directions"] },
+      { kanji: "隣", kana: "となり", romaji: "tonari", english: "next to", topics: ["directions"] },
+      { kanji: "近く", kana: "ちかく", romaji: "chikaku", english: "nearby", topics: ["directions"] },
+      { kanji: "東", kana: "ひがし", romaji: "higashi", english: "east", topics: ["directions"] },
+      { kanji: "西", kana: "にし", romaji: "nishi", english: "west", topics: ["directions"] },
+      { kanji: "南", kana: "みなみ", romaji: "minami", english: "south", topics: ["directions"] },
+      { kanji: "北", kana: "きた", romaji: "kita", english: "north", topics: ["directions"] },
+      { kanji: "真っ直ぐ", kana: "まっすぐ", romaji: "massugu", english: "straight", topics: ["directions"] },
+
+      // ── PARTICLES ──
+      { kana: "は", romaji: "wa", english: "topic marker", topics: ["particles"] },
+      { kana: "が", romaji: "ga", english: "subject marker", topics: ["particles"] },
+      { kana: "を", romaji: "o", english: "object marker", topics: ["particles"] },
+      { kana: "に", romaji: "ni", english: "at / to / in", topics: ["particles"] },
+      { kana: "で", romaji: "de", english: "at / by / with", topics: ["particles"] },
+      { kana: "へ", romaji: "e", english: "toward", topics: ["particles"] },
+      { kana: "と", romaji: "to", english: "and / with", topics: ["particles"] },
+      { kana: "も", romaji: "mo", english: "also / too", topics: ["particles"] },
+      { kana: "の", romaji: "no", english: "possession / of", topics: ["particles"] },
+      { kana: "から", romaji: "kara", english: "from / because", topics: ["particles"] },
+      { kana: "まで", romaji: "made", english: "until / as far as", topics: ["particles"] },
+      { kana: "か", romaji: "ka", english: "question marker", topics: ["particles"] },
+      { kana: "ね", romaji: "ne", english: "isn't it / right?", topics: ["particles"] },
+      { kana: "よ", romaji: "yo", english: "emphasis / assurance", topics: ["particles"] },
+      { kana: "や", romaji: "ya", english: "and (listing)", topics: ["particles"] },
+      { kana: "しか", romaji: "shika", english: "only (with negative)", topics: ["particles"] },
+      { kana: "より", romaji: "yori", english: "than / from", topics: ["particles"] },
+
+      // ── CONJUNCTIONS ──
+      { kana: "そして", romaji: "soshite", english: "and then", topics: ["conjunctions"] },
+      { kana: "それから", romaji: "sorekara", english: "after that", topics: ["conjunctions"] },
+      { kana: "でも", romaji: "demo", english: "but", topics: ["conjunctions"] },
+      { kana: "しかし", romaji: "shikashi", english: "however", topics: ["conjunctions"] },
+      { kana: "だから", romaji: "dakara", english: "therefore / so", topics: ["conjunctions"] },
+      { kana: "それで", romaji: "sorede", english: "and so / therefore", topics: ["conjunctions"] },
+      { kana: "それに", romaji: "soreni", english: "besides / moreover", topics: ["conjunctions"] },
+      { kana: "また", romaji: "mata", english: "also / again", topics: ["conjunctions"] },
+      { kana: "では", romaji: "dewa", english: "well then", topics: ["conjunctions"] },
+      { kana: "じゃあ", romaji: "jaa", english: "well then", topics: ["conjunctions"] },
+      { kana: "ところで", romaji: "tokorode", english: "by the way", topics: ["conjunctions"] },
+      { kana: "例えば", romaji: "tatoeba", english: "for example", topics: ["conjunctions"] },
+      { kana: "もちろん", romaji: "mochiron", english: "of course", topics: ["conjunctions"] },
+      { kana: "本当に", romaji: "hontou ni", english: "really", topics: ["conjunctions"] },
+
+      // ── SPORTS & HOBBIES ──
+      { kana: "スポーツ", romaji: "supootsu", english: "sports", topics: ["sports"] },
+      { kana: "テニス", romaji: "tenisu", english: "tennis", topics: ["sports"] },
+      { kana: "サッカー", romaji: "sakkaa", english: "soccer", topics: ["sports"] },
+      { kanji: "野球", kana: "やきゅう", romaji: "yakyuu", english: "baseball", topics: ["sports"] },
+      { kana: "バスケットボール", romaji: "basukettobooru", english: "basketball", topics: ["sports"] },
+      { kana: "ゴルフ", romaji: "gorufu", english: "golf", topics: ["sports"] },
+      { kanji: "水泳", kana: "すいえい", romaji: "suiei", english: "swimming", topics: ["sports"] },
+      { kana: "ジョギング", romaji: "jogingu", english: "jogging", topics: ["sports"] },
+      { kanji: "空手", kana: "からて", romaji: "karate", english: "karate", topics: ["sports"] },
+      { kanji: "柔道", kana: "じゅうどう", romaji: "juudou", english: "judo", topics: ["sports"] },
+      { kanji: "剣道", kana: "けんどう", romaji: "kendou", english: "kendo", topics: ["sports"] },
+      { kanji: "試合", kana: "しあい", romaji: "shiai", english: "match / game", topics: ["sports"] },
+      { kanji: "選手", kana: "せんしゅ", romaji: "senshu", english: "athlete", topics: ["sports"] },
+      { kana: "チーム", romaji: "chiimu", english: "team", topics: ["sports"] },
+      { kanji: "練習", kana: "れんしゅう", romaji: "renshuu", english: "practice", topics: ["sports"] },
+      { kanji: "勝ち", kana: "かち", romaji: "kachi", english: "victory", topics: ["sports"] },
+      { kanji: "負け", kana: "まけ", romaji: "make", english: "defeat", topics: ["sports"] },
+      { kanji: "趣味", kana: "しゅみ", romaji: "shumi", english: "hobby", topics: ["sports"] },
+      { kanji: "読書", kana: "どくしょ", romaji: "dokusho", english: "reading", topics: ["sports"] },
+      { kanji: "旅行", kana: "りょこう", romaji: "ryokou", english: "travel", topics: ["sports"] },
+      { kanji: "写真", kana: "しゃしん", romaji: "shashin", english: "photograph", topics: ["sports", "arts"] },
+
+      // ── HEALTH ──
+      { kanji: "病気", kana: "びょうき", romaji: "byouki", english: "illness", topics: ["health"] },
+      { kanji: "風邪", kana: "かぜ", romaji: "kaze", english: "cold (illness)", topics: ["health"] },
+      { kanji: "熱", kana: "ねつ", romaji: "netsu", english: "fever", topics: ["health"] },
+      { kanji: "薬", kana: "くすり", romaji: "kusuri", english: "medicine", topics: ["health"] },
+      { kanji: "健康", kana: "けんこう", romaji: "kenkou", english: "health", topics: ["health"] },
+      { kanji: "怪我", kana: "けが", romaji: "kega", english: "injury", topics: ["health"] },
+      { kanji: "運動", kana: "うんどう", romaji: "undou", english: "exercise", topics: ["health", "sports"] },
+      { kanji: "睡眠", kana: "すいみん", romaji: "suimin", english: "sleep", topics: ["health"] },
+      { kanji: "心配", kana: "しんぱい", romaji: "shinpai", english: "worry", topics: ["health"] },
+      { kanji: "安心", kana: "あんしん", romaji: "anshin", english: "relief", topics: ["health"] },
+
+      // ── TECHNOLOGY ──
+      { kanji: "携帯", kana: "けいたい", romaji: "keitai", english: "mobile phone", topics: ["tech"] },
+      { kana: "スマホ", romaji: "sumaho", english: "smartphone", topics: ["tech"] },
+      { kana: "コンピューター", romaji: "konpyuutaa", english: "computer", topics: ["tech"] },
+      { kana: "カメラ", romaji: "kamera", english: "camera", topics: ["tech"] },
+      { kana: "インターネット", romaji: "intaanetto", english: "internet", topics: ["tech"] },
+      { kana: "メール", romaji: "meeru", english: "email", topics: ["tech"] },
+      { kanji: "技術", kana: "ぎじゅつ", romaji: "gijutsu", english: "technology", topics: ["tech"] },
+      { kanji: "機械", kana: "きかい", romaji: "kikai", english: "machine", topics: ["tech"] },
+      { kanji: "電池", kana: "でんち", romaji: "denchi", english: "battery", topics: ["tech"] },
+      { kanji: "画面", kana: "がめん", romaji: "gamen", english: "screen", topics: ["tech"] },
+      { kana: "ラジオ", romaji: "rajio", english: "radio", topics: ["tech"] },
+
+      // ── ARTS & MUSIC ──
+      { kanji: "楽器", kana: "がっき", romaji: "gakki", english: "musical instrument", topics: ["arts"] },
+      { kana: "ピアノ", romaji: "piano", english: "piano", topics: ["arts"] },
+      { kana: "ギター", romaji: "gitaa", english: "guitar", topics: ["arts"] },
+      { kana: "バイオリン", romaji: "baiorin", english: "violin", topics: ["arts"] },
+      { kanji: "太鼓", kana: "たいこ", romaji: "taiko", english: "drum", topics: ["arts"] },
+      { kanji: "笛", kana: "ふえ", romaji: "fue", english: "flute", topics: ["arts"] },
+      { kanji: "演奏", kana: "えんそう", romaji: "ensou", english: "performance", topics: ["arts"] },
+      { kana: "コンサート", romaji: "konsaato", english: "concert", topics: ["arts"] },
+      { kanji: "美術", kana: "びじゅつ", romaji: "bijutsu", english: "art", topics: ["arts"] },
+      { kanji: "演劇", kana: "えんげき", romaji: "engeki", english: "theater / play", topics: ["arts"] },
+      { kana: "ダンス", romaji: "dansu", english: "dance", topics: ["arts"] },
+      { kanji: "小説", kana: "しょうせつ", romaji: "shousetsu", english: "novel", topics: ["arts"] },
+
+      // ── COMMON NOUNS ──
+      { kanji: "物", kana: "もの", romaji: "mono", english: "thing", topics: ["nouns"] },
+      { kanji: "事", kana: "こと", romaji: "koto", english: "thing (abstract)", topics: ["nouns"] },
+      { kanji: "名前", kana: "なまえ", romaji: "namae", english: "name", topics: ["nouns"] },
+      { kanji: "言葉", kana: "ことば", romaji: "kotoba", english: "word / language", topics: ["nouns"] },
+      { kanji: "意味", kana: "いみ", romaji: "imi", english: "meaning", topics: ["nouns"] },
+      { kanji: "理由", kana: "りゆう", romaji: "riyuu", english: "reason", topics: ["nouns"] },
+      { kanji: "方法", kana: "ほうほう", romaji: "houhou", english: "method", topics: ["nouns"] },
+      { kanji: "問題", kana: "もんだい", romaji: "mondai", english: "problem", topics: ["nouns"] },
+      { kanji: "答え", kana: "こたえ", romaji: "kotae", english: "answer", topics: ["nouns"] },
+      { kanji: "質問", kana: "しつもん", romaji: "shitsumon", english: "question", topics: ["nouns"] },
+      { kanji: "説明", kana: "せつめい", romaji: "setsumei", english: "explanation", topics: ["nouns"] },
+      { kanji: "話", kana: "はなし", romaji: "hanashi", english: "story / talk", topics: ["nouns"] },
+      { kanji: "音", kana: "おと", romaji: "oto", english: "sound", topics: ["nouns"] },
+      { kanji: "声", kana: "こえ", romaji: "koe", english: "voice", topics: ["nouns"] },
+      { kanji: "色", kana: "いろ", romaji: "iro", english: "color", topics: ["nouns"] },
+      { kanji: "形", kana: "かたち", romaji: "katachi", english: "shape", topics: ["nouns"] },
+      { kanji: "数", kana: "かず", romaji: "kazu", english: "number", topics: ["nouns"] },
+      { kanji: "半分", kana: "はんぶん", romaji: "hanbun", english: "half", topics: ["nouns"] },
+      { kanji: "全部", kana: "ぜんぶ", romaji: "zenbu", english: "all / everything", topics: ["nouns"] },
+      { kanji: "両方", kana: "りょうほう", romaji: "ryouhou", english: "both", topics: ["nouns"] },
+      { kanji: "同じ", kana: "おなじ", romaji: "onaji", english: "same", topics: ["nouns"] },
+      { kanji: "本当", kana: "ほんとう", romaji: "hontou", english: "truth / really", topics: ["nouns"] },
+      { kanji: "嘘", kana: "うそ", romaji: "uso", english: "lie", topics: ["nouns"] },
+      { kanji: "夢", kana: "ゆめ", romaji: "yume", english: "dream", topics: ["nouns"] },
+      { kanji: "希望", kana: "きぼう", romaji: "kibou", english: "hope", topics: ["nouns"] },
+      { kanji: "愛", kana: "あい", romaji: "ai", english: "love", topics: ["nouns"] },
+      { kanji: "心", kana: "こころ", romaji: "kokoro", english: "heart / mind", topics: ["nouns"] },
+      { kanji: "力", kana: "ちから", romaji: "chikara", english: "power / strength", topics: ["nouns"] },
+      { kanji: "気分", kana: "きぶん", romaji: "kibun", english: "feeling / mood", topics: ["nouns"] },
+      { kanji: "気持ち", kana: "きもち", romaji: "kimochi", english: "feeling", topics: ["nouns"] },
+      { kanji: "考え", kana: "かんがえ", romaji: "kangae", english: "thought / idea", topics: ["nouns"] },
+      { kanji: "意見", kana: "いけん", romaji: "iken", english: "opinion", topics: ["nouns"] },
+      { kanji: "経験", kana: "けいけん", romaji: "keiken", english: "experience", topics: ["nouns"] },
+      { kanji: "結果", kana: "けっか", romaji: "kekka", english: "result", topics: ["nouns"] },
+      { kanji: "目的", kana: "もくてき", romaji: "mokuteki", english: "purpose", topics: ["nouns"] },
+      { kanji: "予定", kana: "よてい", romaji: "yotei", english: "plan / schedule", topics: ["nouns"] },
+      { kanji: "準備", kana: "じゅんび", romaji: "junbi", english: "preparation", topics: ["nouns"] },
+      { kanji: "注意", kana: "ちゅうい", romaji: "chuui", english: "attention / caution", topics: ["nouns"] },
+      { kanji: "関係", kana: "かんけい", romaji: "kankei", english: "relationship", topics: ["nouns"] },
+      { kanji: "文化", kana: "ぶんか", romaji: "bunka", english: "culture", topics: ["nouns"] },
+      { kanji: "社会", kana: "しゃかい", romaji: "shakai", english: "society", topics: ["nouns"] },
+      { kanji: "歴史", kana: "れきし", romaji: "rekishi", english: "history", topics: ["nouns"] },
+      { kanji: "科学", kana: "かがく", romaji: "kagaku", english: "science", topics: ["nouns"] },
+      { kanji: "数学", kana: "すうがく", romaji: "suugaku", english: "mathematics", topics: ["nouns", "school"] },
+      { kanji: "英語", kana: "えいご", romaji: "eigo", english: "English language", topics: ["nouns", "school"] },
+      { kanji: "日本語", kana: "にほんご", romaji: "nihongo", english: "Japanese language", topics: ["nouns", "school"] },
+      { kanji: "外国", kana: "がいこく", romaji: "gaikoku", english: "foreign country", topics: ["nouns"] },
+      { kanji: "外国人", kana: "がいこくじん", romaji: "gaikokujin", english: "foreigner", topics: ["nouns", "people"] },
+    ];
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  TOPIC METADATA
+    // ═════════════════════════════════════════════════════════════════════
+
+    const TOPICS = {
+      people: { label: "People", icon: "👤" },
+      family: { label: "Family", icon: "👪" },
+      numbers: { label: "Numbers", icon: "🔢" },
+      time: { label: "Time & Dates", icon: "⏰" },
+      verbs: { label: "Verbs", icon: "🏃" },
+      i_adj: { label: "i-Adjectives", icon: "🎨" },
+      na_adj: { label: "na-Adjectives", icon: "✨" },
+      adverbs: { label: "Adverbs", icon: "⚡" },
+      food: { label: "Food & Drink", icon: "🍣" },
+      animals: { label: "Animals", icon: "🐾" },
+      body: { label: "Body Parts", icon: "🧍" },
+      colors: { label: "Colors", icon: "🌈" },
+      places: { label: "Places", icon: "📍" },
+      transport: { label: "Transport", icon: "🚗" },
+      clothing: { label: "Clothing", icon: "👕" },
+      house: { label: "House & Home", icon: "🏠" },
+      weather: { label: "Weather & Nature", icon: "🌤️" },
+      school: { label: "School", icon: "📚" },
+      work: { label: "Work", icon: "💼" },
+      questions: { label: "Question Words", icon: "❓" },
+      greetings: { label: "Greetings", icon: "🙇" },
+      directions: { label: "Directions", icon: "🧭" },
+      particles: { label: "Particles", icon: "🔗" },
+      conjunctions: { label: "Conjunctions", icon: "➡️" },
+      sports: { label: "Sports & Hobbies", icon: "⚽" },
+      health: { label: "Health", icon: "🏥" },
+      tech: { label: "Technology", icon: "💻" },
+      arts: { label: "Music & Arts", icon: "🎵" },
+      nouns: { label: "Common Nouns", icon: "📦" },
+      mixed: { label: "Mixed (All)", icon: "🎲" },
+    };
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  CONFIG
+    // ═════════════════════════════════════════════════════════════════════
+
+    const MASTER_STREAK = 3;                 // correct answers in a row to master a word
+    const STORAGE_KEY = 'n5quiz.progress.v1';  // per-word streaks
+    const SETTINGS_KEY = 'n5quiz.settings.v1'; // UI preferences
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  WORD INDEX
+    //  The dictionary itself is never mutated. We build a deduplicated
+    //  index at runtime so duplicate entries (e.g. 外国人 listed twice)
+    //  never break counts or streaks.
+    // ═════════════════════════════════════════════════════════════════════
+
+    function wid(w) {
+      return (w.kanji || w.kana) + '|' + w.romaji;
+    }
+
+    const UNIQUE_WORDS = (() => {
+      const seen = new Set();
+      const out = [];
+      for (const w of WORDS) {
+        const id = wid(w);
+        if (seen.has(id)) continue;
+        seen.add(id);
+        out.push(w);
+      }
+      return out;
+    })();
+
+    const TOPIC_INDEX = {};
+    for (const key of Object.keys(TOPICS)) {
+      TOPIC_INDEX[key] = key === 'mixed'
+        ? UNIQUE_WORDS
+        : UNIQUE_WORDS.filter(w => w.topics.includes(key));
+    }
+
+    const TOTAL_WORDS = UNIQUE_WORDS.length;
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  PERSISTENCE
+    // ═════════════════════════════════════════════════════════════════════
+
+    let progress = {};
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) progress = JSON.parse(raw) || {};
+    } catch (e) {
+      progress = {};
+    }
+
+    let settings = { showRomaji: true };
+    try {
+      const raw = localStorage.getItem(SETTINGS_KEY);
+      if (raw) Object.assign(settings, JSON.parse(raw));
+    } catch (e) { /* ignore */ }
+
+    function saveProgress() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+      } catch (e) { /* storage full / private mode — ignore */ }
+    }
+
+    function saveSettings() {
+      try {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+      } catch (e) { /* ignore */ }
+    }
+
+    function streakOf(word) {
+      return progress[wid(word)] || 0;
+    }
+
+    function setStreakById(id, value) {
+      if (value <= 0) delete progress[id];
+      else progress[id] = Math.min(MASTER_STREAK, value);
+      saveProgress();
+    }
+
+    function isMastered(word) {
+      return streakOf(word) >= MASTER_STREAK;
+    }
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  STATE
+    // ═════════════════════════════════════════════════════════════════════
+
+    const state = {
+      topic: null,
+      pool: [],
+      currentWord: null,
+      options: [],
+      answered: false,
+      finished: false,
+      questionNo: 0,
+      prevId: null,
+      reask: [],            // [{ id, dueAt }] — words missed, waiting to come back
+      sessionCorrect: 0,
+      sessionWrong: 0,
+      sessionMastered: 0,
+      missed: [],
+      showRomaji: settings.showRomaji,
+    };
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  DOM
+    // ═════════════════════════════════════════════════════════════════════
+
+    const $ = id => document.getElementById(id);
+    const homeArea = $('homeArea');
+    const quizArea = $('quizArea');
+    const resultsArea = $('resultsArea');
+    const topicGrid = $('topicGrid');
+    const quizTopicLabel = $('quizTopicLabel');
+    const wordCard = $('wordCard');
+    const wordKanji = $('wordKanji');
+    const wordKana = $('wordKana');
+    const wordRomaji = $('wordRomaji');
+    const masteredBadge = $('masteredBadge');
+    const streakPips = $('streakPips');
+    const streakLabel = $('streakLabel');
+    const optionsContainer = $('optionsContainer');
+    const nextBtn = $('nextBtn');
+    const backBtn = $('backBtn');
+    const romajiToggle = $('romajiToggle');
+    const progressFill = $('progressFill');
+    const sessionStats = $('sessionStats');
+    const topicMasteredEl = $('topicMastered');
+    const topicTotalEl = $('topicTotal');
+    const globalCount = $('globalCount');
+    const globalFill = $('globalFill');
+    const bigScore = $('bigScore');
+    const scoreMsg = $('scoreMsg');
+    const missedList = $('missedList');
+    const resultsTitle = $('resultsTitle');
+    const resultsHomeBtn = $('resultsHomeBtn');
+    const resultsRetryBtn = $('resultsRetryBtn');
+    const sumCorrect = $('sumCorrect');
+    const sumWrong = $('sumWrong');
+    const sumMastered = $('sumMastered');
+    const resetAllBtn = $('resetAllBtn');
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  HELPERS
+    // ═════════════════════════════════════════════════════════════════════
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function getDisplay(word) {
+      return word.kanji || word.kana;
+    }
+
+    function masteredCount(pool) {
+      let n = 0;
+      for (const w of pool) if (isMastered(w)) n++;
+      return n;
+    }
+
+    function globalMasteredCount() {
+      return masteredCount(UNIQUE_WORDS);
+    }
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  HOME RENDERING
+    // ═════════════════════════════════════════════════════════════════════
+
+    function renderGlobalProgress() {
+      const m = globalMasteredCount();
+      const pct = TOTAL_WORDS ? (m / TOTAL_WORDS) * 100 : 0;
+      globalCount.textContent = `${m.toLocaleString()} / ${TOTAL_WORDS.toLocaleString()} · ${pct.toFixed(1)}%`;
+      globalFill.style.width = `${pct}%`;
+    }
+
+    function renderTopics() {
+      topicGrid.innerHTML = '';
+
+      for (const key of Object.keys(TOPICS)) {
+        const meta = TOPICS[key];
+        const pool = TOPIC_INDEX[key];
+        if (pool.length < 4) continue; // too small for a quiz
+
+        const done = masteredCount(pool);
+        const total = pool.length;
+        const pct = (done / total) * 100;
+        const complete = done >= total;
+
+        const tile = document.createElement('div');
+        tile.className = 'topic-btn' + (complete ? ' done' : '');
+        tile.dataset.topic = key;
+
+        tile.innerHTML = `
+          <div class="tb-top">
+            <span class="tb-icon">${meta.icon}</span>
+            ${done > 0 ? '<button class="tb-reset" title="Reset this topic" aria-label="Reset">↺</button>' : ''}
+          </div>
+          <div class="tb-label">${complete ? '✓ ' : ''}${meta.label}</div>
+          <div class="tb-count">${done} / ${total}</div>
+          <div class="tb-bar"><div class="tb-fill" style="width:${pct}%"></div></div>
+        `;
+
+        if (!complete) {
+          tile.addEventListener('click', () => startQuiz(key));
         }
 
-        function pick(arr, n) {
-            const copy = [...arr];
-            shuffle(copy);
-            return copy.slice(0, n);
+        const resetBtn = tile.querySelector('.tb-reset');
+        if (resetBtn) {
+          resetBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            resetTopic(key);
+          });
         }
 
-        // ── render topic grid ──
-        function renderTopics() {
-            topicGrid.innerHTML = '';
-            const keys = Object.keys(DICT);
-            for (const key of keys) {
-                const meta = TOPIC_META[key] || { label: key, icon: '📚', badge: '' };
-                const count = DICT[key].length;
-                const btn = document.createElement('button');
-                btn.className = 'topic-btn';
-                btn.innerHTML = `
-                    ${meta.icon} ${meta.label}
-                    <span class="sub">${count} words</span>
-                    ${meta.badge ? `<span class="badge">${meta.badge}</span>` : ''}
-                `;
-                btn.dataset.topic = key;
-                btn.addEventListener('click', () => startQuiz(key));
-                topicGrid.appendChild(btn);
-            }
+        topicGrid.appendChild(tile);
+      }
+    }
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  RESET
+    // ═════════════════════════════════════════════════════════════════════
+
+    function resetTopic(topicKey) {
+      const meta = TOPICS[topicKey];
+      const pool = TOPIC_INDEX[topicKey];
+      const done = masteredCount(pool);
+      const msg = `Reset "${meta.label}"?\n\n` +
+        `This clears the streak of all ${pool.length} words in this topic` +
+        `${done ? ` (${done} currently mastered)` : ''}.\n\n` +
+        `Words shared with other topics will also lose their streak. This cannot be undone.`;
+      if (!confirm(msg)) return;
+
+      for (const w of pool) delete progress[wid(w)];
+      saveProgress();
+      renderTopics();
+      renderGlobalProgress();
+    }
+
+    function resetAllProgress() {
+      const m = globalMasteredCount();
+      if (!confirm(`Reset ALL progress?\n\nThis clears the streak of every word (${m} mastered).\n\nThis cannot be undone.`)) return;
+      progress = {};
+      saveProgress();
+      renderTopics();
+      renderGlobalProgress();
+    }
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  QUIZ LIFECYCLE
+    // ═════════════════════════════════════════════════════════════════════
+
+    function startQuiz(topicKey) {
+      const pool = TOPIC_INDEX[topicKey];
+      const remaining = pool.filter(w => !isMastered(w));
+      if (remaining.length === 0) return; // nothing left to do
+
+      state.topic = topicKey;
+      state.pool = pool;
+      state.currentWord = null;
+      state.options = [];
+      state.answered = false;
+      state.finished = false;
+      state.questionNo = 0;
+      state.prevId = null;
+      state.reask = [];
+      state.sessionCorrect = 0;
+      state.sessionWrong = 0;
+      state.sessionMastered = 0;
+      state.missed = [];
+
+      quizTopicLabel.textContent = TOPICS[topicKey].label;
+
+      homeArea.classList.add('hidden');
+      resultsArea.classList.remove('active');
+      quizArea.classList.add('active');
+      nextBtn.classList.remove('show');
+      nextBtn.classList.remove('finish');
+
+      updateSessionStats();
+      updateQuizProgress();
+      showQuestion();
+    }
+
+    // ── weighted draw with a short-term re-ask queue ──
+    function drawWord(available) {
+      // 1. A word we recently missed and that is now due comes first.
+      const due = state.reask.filter(r => r.dueAt <= state.questionNo);
+      if (due.length) {
+        due.sort((a, b) => a.dueAt - b.dueAt);
+        const pick = due.find(r => r.id !== state.prevId) || due[0];
+        state.reask = state.reask.filter(r => r.id !== pick.id);
+        const w = available.find(x => wid(x) === pick.id);
+        if (w) return w;
+      }
+
+      // 2. Otherwise weighted random — low streaks are far more likely.
+      let cands = available;
+      if (available.length > 1) {
+        const filtered = available.filter(w => wid(w) !== state.prevId);
+        if (filtered.length) cands = filtered;
+      }
+
+      const weights = cands.map(w => (MASTER_STREAK + 1) - streakOf(w));
+      const total = weights.reduce((a, b) => a + b, 0);
+      let r = Math.random() * total;
+      for (let i = 0; i < cands.length; i++) {
+        r -= weights[i];
+        if (r <= 0) return cands[i];
+      }
+      return cands[cands.length - 1];
+    }
+
+    function showQuestion() {
+      const available = state.pool.filter(w => !isMastered(w));
+      if (available.length === 0) {
+        endSession();
+        return;
+      }
+
+      state.questionNo++;
+      const word = drawWord(available);
+      state.currentWord = word;
+      state.prevId = wid(word);
+      state.answered = false;
+
+      // Build the option set from the entire topic pool so distractors stay
+      // plausible even when only a few words remain unmastered.
+      const usedEnglish = new Set([word.english]);
+      const candidatePool = state.pool.filter(w =>
+        wid(w) !== wid(word) &&
+        w.english !== word.english &&
+        w.romaji !== word.romaji
+      );
+      const distractors = [];
+      for (const w of shuffle(candidatePool)) {
+        if (distractors.length >= 3) break;
+        if (usedEnglish.has(w.english)) continue;
+        usedEnglish.add(w.english);
+        distractors.push(w);
+      }
+
+      const opts = shuffle([
+        { english: word.english, correct: true },
+        ...distractors.map(w => ({ english: w.english, correct: false })),
+      ]);
+      state.options = opts;
+
+      // Word card
+      wordKanji.textContent = getDisplay(word);
+      wordKana.textContent = word.kanji ? word.kana : '';
+      wordRomaji.textContent = word.romaji;
+      wordRomaji.classList.toggle('hidden', !state.showRomaji);
+      wordCard.classList.remove('mastered');
+      masteredBadge.classList.remove('show');
+      renderPips(word);
+
+      // Options
+      optionsContainer.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D'];
+      opts.forEach((opt, i) => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.innerHTML = `<span class="letter">${letters[i]}.</span>${opt.english}`;
+        div.addEventListener('click', () => handleAnswer(i));
+        optionsContainer.appendChild(div);
+      });
+
+      nextBtn.classList.remove('show');
+      nextBtn.classList.remove('finish');
+      nextBtn.textContent = 'next →';
+
+      updateQuizProgress();
+    }
+
+    function renderPips(word) {
+      const s = streakOf(word);
+      streakPips.innerHTML = '';
+      for (let i = 0; i < MASTER_STREAK; i++) {
+        const p = document.createElement('span');
+        let cls = 'pip';
+        if (i < s) cls += s >= MASTER_STREAK ? ' master' : ' on';
+        p.className = cls;
+        streakPips.appendChild(p);
+      }
+      streakLabel.textContent = s >= MASTER_STREAK
+        ? 'mastered'
+        : `${s}/${MASTER_STREAK} in a row`;
+    }
+
+    function handleAnswer(selectedIdx) {
+      if (state.answered) return;
+      state.answered = true;
+
+      const word = state.currentWord;
+      const id = wid(word);
+      const selected = state.options[selectedIdx];
+      const correctIdx = state.options.findIndex(o => o.correct);
+      const optionEls = optionsContainer.querySelectorAll('.option');
+
+      optionEls.forEach(el => el.classList.add('disabled'));
+
+      let masteredNow = false;
+
+      if (selected.correct) {
+        state.sessionCorrect++;
+        optionEls[selectedIdx].classList.add('correct');
+
+        const next = Math.min(MASTER_STREAK, streakOf(word) + 1);
+        setStreakById(id, next);
+
+        if (next >= MASTER_STREAK) {
+          masteredNow = true;
+          state.sessionMastered++;
+          // It is mastered now — cancel any pending re-ask.
+          state.reask = state.reask.filter(r => r.id !== id);
         }
+      } else {
+        state.sessionWrong++;
+        optionEls[selectedIdx].classList.add('wrong');
+        optionEls[correctIdx].classList.add('reveal-correct');
+        setStreakById(id, 0);
+        state.missed.push(word);
 
-        // ── start quiz ──
-        function startQuiz(topicKey) {
-            const words = DICT[topicKey];
-            if (!words || words.length < 4) {
-                alert('Not enough words in this topic (need at least 4).');
-                return;
-            }
-
-            state.topic = topicKey;
-            state.words = shuffle([...words]);
-            state.questionIndex = 0;
-            state.totalQuestions = state.words.length;
-            state.answered = false;
-
-            const meta = TOPIC_META[topicKey] || { label: topicKey };
-            quizTopicLabel.textContent = meta.label;
-
-            homeArea.classList.add('hidden');
-            quizArea.classList.add('active');
-            nextBtn.classList.remove('show');
-
-            showQuestion();
-        }
-
-        // ── show question ──
-        function showQuestion() {
-            const words = state.words;
-            if (state.questionIndex >= words.length) {
-                // reshuffle when we run out
-                state.words = shuffle([...DICT[state.topic]]);
-                state.questionIndex = 0;
-                state.totalQuestions = state.words.length;
-            }
-
-            const word = words[state.questionIndex];
-            state.currentWord = word;
-            state.answered = false;
-
-            // build 4 options: 1 correct + 3 wrong from same topic
-            const pool = DICT[state.topic].filter(w => w.english !== word.english);
-            const wrongs = pick(pool, 3);
-            const optList = [
-                { english: word.english, isCorrect: true },
-                ...wrongs.map(w => ({ english: w.english, isCorrect: false })),
-            ];
-            shuffle(optList);
-            state.options = optList;
-
-            // render
-            romajiDisplay.textContent = word.romaji;
-            questionCount.textContent = `${state.questionIndex + 1} / ${state.totalQuestions}`;
-
-            optionsContainer.innerHTML = '';
-            const letters = ['A', 'B', 'C', 'D'];
-            optList.forEach((opt, idx) => {
-                const div = document.createElement('div');
-                div.className = 'option';
-                div.innerHTML = `<span class="letter">${letters[idx]}.</span> ${opt.english}`;
-                div.dataset.index = idx;
-                div.addEventListener('click', () => handleOptionClick(idx));
-                optionsContainer.appendChild(div);
-            });
-
-            nextBtn.classList.remove('show');
-            nextBtn.innerHTML = `<span class="emoji">→</span> next`;
-        }
-
-        // ── handle option click ──
-        function handleOptionClick(index) {
-            if (state.answered) return;
-            state.answered = true;
-
-            const opt = state.options[index];
-            const isCorrect = opt.isCorrect;
-
-            const optionEls = optionsContainer.querySelectorAll('.option');
-            // disable all
-            optionEls.forEach(el => el.classList.add('disabled'));
-
-            // find correct index
-            const correctIdx = state.options.findIndex(o => o.isCorrect);
-
-            if (isCorrect) {
-                optionEls[index].classList.add('correct');
-            } else {
-                optionEls[index].classList.add('wrong');
-                optionEls[correctIdx].classList.add('reveal-correct');
-            }
-
-            // show next button
-            nextBtn.classList.add('show');
-            nextBtn.innerHTML = `<span class="emoji">→</span> next`;
-        }
-
-        // ── next question ──
-        function nextQuestion() {
-            state.questionIndex++;
-            showQuestion();
-            // scroll to top of quiz area smoothly
-            quizArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-
-        // ── go back home ──
-        function goHome() {
-            quizArea.classList.remove('active');
-            homeArea.classList.remove('hidden');
-            nextBtn.classList.remove('show');
-            state.answered = false;
-        }
-
-        // ── event listeners ──
-        nextBtn.addEventListener('click', nextQuestion);
-        backBtn.addEventListener('click', goHome);
-
-        // ── init ──
-        renderTopics();
-
-        // ── keyboard support ──
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && nextBtn.classList.contains('show')) {
-                nextBtn.click();
-            }
-            if (e.key === 'Escape' && quizArea.classList.contains('active')) {
-                goHome();
-            }
-            // number keys 1-4 for options
-            if (!state.answered && quizArea.classList.contains('active')) {
-                const num = parseInt(e.key);
-                if (num >= 1 && num <= 4) {
-                    const idx = num - 1;
-                    const els = optionsContainer.querySelectorAll('.option');
-                    if (els[idx] && !els[idx].classList.contains('disabled')) {
-                        els[idx].click();
-                    }
-                }
-            }
+        // Schedule this word to come back after a few intervening questions.
+        state.reask = state.reask.filter(r => r.id !== id);
+        state.reask.push({
+          id,
+          dueAt: state.questionNo + 3 + Math.floor(Math.random() * 3),
         });
+      }
 
-        console.log('🇯🇵 N5 Quiz loaded — enjoy!');
-        console.log(`📚 ${Object.keys(DICT).length} topics, ${Object.values(DICT).reduce((acc, arr) => acc + arr.length, 0)} words total.`);
-    </script>
+      // Refresh pips to show the new streak.
+      renderPips(word);
+
+      if (masteredNow) {
+        wordCard.classList.add('mastered');
+        masteredBadge.classList.add('show');
+        streakLabel.textContent = 'mastered';
+      }
+
+      updateSessionStats();
+      updateQuizProgress();
+
+      // Has the whole topic been cleared?
+      const remaining = state.pool.filter(w => !isMastered(w)).length;
+      state.finished = remaining === 0;
+
+      nextBtn.textContent = state.finished ? 'finish →' : 'next →';
+      nextBtn.classList.toggle('finish', state.finished);
+      nextBtn.classList.add('show');
+    }
+
+    function nextQuestion() {
+      if (state.finished) {
+        endSession();
+        return;
+      }
+      showQuestion();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateSessionStats() {
+      sessionStats.innerHTML =
+        `<span class="score-correct">${state.sessionCorrect}</span> ✓ · ` +
+        `<span class="score-wrong">${state.sessionWrong}</span> ✗`;
+    }
+
+    function updateQuizProgress() {
+      const total = state.pool.length;
+      const done = masteredCount(state.pool);
+      progressFill.style.width = `${total ? (done / total) * 100 : 0}%`;
+      topicMasteredEl.textContent = done;
+      topicTotalEl.textContent = total;
+    }
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  RESULTS
+    // ═════════════════════════════════════════════════════════════════════
+
+    function endSession() {
+      quizArea.classList.remove('active');
+      resultsArea.classList.add('active');
+
+      const total = state.pool.length;
+      const done = masteredCount(state.pool);
+      const pct = Math.round((done / total) * 100);
+
+      bigScore.innerHTML = `${done}<span class="denom">/${total}</span>`;
+      resultsTitle.textContent = `${TOPICS[state.topic].icon} ${TOPICS[state.topic].label} complete!`;
+      scoreMsg.textContent = `You mastered all ${total} words in this topic. 素晴らしい！`;
+
+      sumCorrect.textContent = state.sessionCorrect;
+      sumWrong.textContent = state.sessionWrong;
+      sumMastered.textContent = state.sessionMastered;
+
+      if (state.missed.length === 0) {
+        missedList.innerHTML =
+          '<div style="text-align:center;color:#16a34a;font-weight:600;padding:16px;">No mistakes in this session — well done! 🎉</div>';
+      } else {
+        // De-duplicate the review list.
+        const seen = new Set();
+        const unique = [];
+        for (const w of state.missed) {
+          const id = wid(w);
+          if (seen.has(id)) continue;
+          seen.add(id);
+          unique.push(w);
+        }
+        missedList.innerHTML = `<div class="ml-title">Words you missed (${unique.length})</div>` +
+          unique.map(w => `
+            <div class="missed-item">
+              <div>
+                <div class="m-word">${getDisplay(w)}</div>
+                <div class="m-romaji">${w.romaji}</div>
+              </div>
+              <div class="m-english">${w.english}</div>
+            </div>
+          `).join('');
+      }
+
+      resultsRetryBtn.textContent = 'Reset & replay';
+      resultsRetryBtn.onclick = () => {
+        resetTopic(state.topic);
+        startQuiz(state.topic);
+      };
+      resultsHomeBtn.onclick = goHome;
+
+      renderTopics();
+      renderGlobalProgress();
+    }
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  NAVIGATION
+    // ═════════════════════════════════════════════════════════════════════
+
+    function goHome() {
+      quizArea.classList.remove('active');
+      resultsArea.classList.remove('active');
+      homeArea.classList.remove('hidden');
+      nextBtn.classList.remove('show');
+      renderTopics();
+      renderGlobalProgress();
+    }
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  ROMAJI TOGGLE
+    // ═════════════════════════════════════════════════════════════════════
+
+    function applyRomajiToggle() {
+      wordRomaji.classList.toggle('hidden', !state.showRomaji);
+      romajiToggle.textContent = state.showRomaji ? 'ローマ字 ON' : 'ローマ字 OFF';
+      romajiToggle.classList.toggle('on', state.showRomaji);
+    }
+
+    romajiToggle.addEventListener('click', () => {
+      state.showRomaji = !state.showRomaji;
+      settings.showRomaji = state.showRomaji;
+      saveSettings();
+      applyRomajiToggle();
+    });
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  EVENT LISTENERS
+    // ═════════════════════════════════════════════════════════════════════
+
+    nextBtn.addEventListener('click', nextQuestion);
+    backBtn.addEventListener('click', goHome);
+    resetAllBtn.addEventListener('click', resetAllProgress);
+
+    document.addEventListener('keydown', (e) => {
+      if (!quizArea.classList.contains('active')) return;
+      if (e.key === 'Escape') { goHome(); return; }
+
+      if (!state.answered) {
+        const n = parseInt(e.key, 10);
+        if (n >= 1 && n <= 4) {
+          const els = optionsContainer.querySelectorAll('.option');
+          if (els[n - 1] && !els[n - 1].classList.contains('disabled')) els[n - 1].click();
+        }
+      } else if (e.key === 'Enter' && nextBtn.classList.contains('show')) {
+        nextBtn.click();
+      }
+    });
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  INIT
+    // ═════════════════════════════════════════════════════════════════════
+
+    applyRomajiToggle();
+    renderTopics();
+    renderGlobalProgress();
+
+    console.log(
+      `📚 ${TOTAL_WORDS} unique words (from ${WORDS.length} entries) · ` +
+      `${Object.keys(TOPICS).length} topics · mastery at ${MASTER_STREAK} in a row`
+    );
+  </script>
 </body>
 
 </html>
